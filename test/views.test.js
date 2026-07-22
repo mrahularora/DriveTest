@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const path = require("node:path");
 const ejs = require("ejs");
 const navbar = path.join(__dirname, "..", "views", "layouts", "navbar.ejs");
+const footer = path.join(__dirname, "..", "views", "layouts", "footer.ejs");
 
 const user = {
   _id: "507f1f77bcf86cd799439011",
@@ -65,4 +66,10 @@ test("navigation shows role links and marks the current page", async () => {
   });
   assert.match(guest, /aria-current="page">Log in<\/a>/);
   assert.doesNotMatch(guest, />Log out<\/a>/);
+});
+
+test("footer has current product copy without placeholder links", async () => {
+  const html = await ejs.renderFile(footer);
+  assert.match(html, new RegExp(`${new Date().getFullYear()} DriveTest Booking Portal`));
+  assert.doesNotMatch(html, /href="#!"/);
 });
