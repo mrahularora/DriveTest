@@ -9,6 +9,8 @@ const modifyDetail = require("../controllers/modifyDetail");
 const examineAppointment = require("../controllers/examinUserAppointment");
 const createAccount = require("../controllers/createNewAccount");
 const auth = require("../middleware/authMiddleware");
+const express = require("express");
+const { secureHeaders, loginRateLimit } = require("../middleware/securityMiddleware");
 
 const response = () => ({
   statusCode: 200,
@@ -199,4 +201,25 @@ test("booking conflicts return status 409 before any write", async () => {
   assert.equal(res.statusCode, 409);
   assert.equal(res.view, "gtest");
   assert.equal(wroteBooking, false);
+});
+
+test("security headers and login rate limiting protect authentication", async (t) => {
+  const app = express();
+  app.use(secureHeaders);
+  app.post("/login", loginRateLimit, (req, res) => res.sendStatus(401));
+  const server = app.listen(0);
+  t.after(() => server.close());
+  const url = `http://127.0.0.1:${server.address().port}/login`;
+
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const response = await fetch(url, { method: "POST" });
+    assert.equal(response.status, 401);
+  }
+
+  const blocked = await fetch(url, { method: "POST" });
+  assert.equal(blocked.status, 429);
+  assert.match(await blocked.text(), /Too many login attempts/);
+  assert.equal(blocked.headers.get("x-content-type-options"), "nosniff");
+  assert.equal(blocked.headers.get("x-frame-options"), "SAMEORIGIN");
+  assert.ok(blocked.headers.get("ratelimit"));
 });

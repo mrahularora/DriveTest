@@ -8,10 +8,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const expressSession = require("express-session");
 const { MongoStore } = require("connect-mongo");
+const { secureHeaders, loginRateLimit } = require("./middleware/securityMiddleware");
 
 const app = express();
 app.set("view engine", "ejs");
 app.set("trust proxy", process.env.NODE_ENV === "production" ? 1 : false);
+app.use(secureHeaders);
 app.use(express.json());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
@@ -76,7 +78,7 @@ app.post("/examiner/appointments/:id/:testType", auth.examinerMiddleware, examin
 app.post("/edit", auth.driverMiddleware, modifyUserDetails);
 app.post("/admin/appointments", auth.adminMiddleware, addTimeSlot);
 app.post("/users/register", redirectIfAuthenticated, createNewAccount);
-app.post("/users/login", redirectIfAuthenticated, loginController);
+app.post("/users/login", loginRateLimit, redirectIfAuthenticated, loginController);
 app.use(pageNotFoundView);
 app.use(applicationError);
 
