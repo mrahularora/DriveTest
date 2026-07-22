@@ -3,57 +3,98 @@
 <%- include('layouts/head'); -%>
 
   <head>
-    <title>Dashboard</title>
+    <title>Dashboard | DriveTest</title>
   </head>
 
   <body>
-    <!-- Navigation-->
     <%- include('layouts/navbar'); -%>
 
-      <!-- Page Header-->
-      <header class="masthead">
-        <div class="container position-relative px-4 px-lg-5">
-          <div class="row gx-4 gx-lg-5 justify-content-center">
-            <div class="col-md-10 col-lg-8 col-xl-7">
-              <div class="site-heading">
-                <h1>Dashboard</h1>
-                <span class="subheading">DriveTest Booking Kiosk</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-
-      <!-- Main Content-->
-      <div class="container px-4 px-lg-5">
+    <header class="masthead home-hero" style="background-image: url('/assets/img/home-bg.jpg')">
+      <div class="container position-relative px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
-          <div class="col-md-10 col-lg-8 col-xl-7">
-            <!-- Post preview-->
-            <div class="post-preview">
-              <a href="/login">
-                <h2 class="post-title">You can book G2/G drive test from this Kiosk</h2>
-                <h3 class="post-subtitle">You can book G2/G drive test from this Kiosk</h3>
-              </a>
-              <p class="post-meta">
-                Posted by
-                <a href="#!">DriveTest Center</a>
-                on September 24, 2023
-              </p>
+          <div class="col-lg-9 text-center text-white">
+            <span class="home-eyebrow">DriveTest booking portal</span>
+            <h1><%= loggedIn ? 'Your next step starts here.' : 'Book. Prepare. Drive.' %></h1>
+            <p class="home-lead">
+              Manage G2 and G road-test appointments in one simple place.
+            </p>
+
+            <div class="home-actions">
+              <% if (!loggedIn) { %>
+                <a class="btn btn-primary btn-lg" href="/signup">Create an account</a>
+                <a class="btn btn-outline-light btn-lg" href="/login">Sign in</a>
+              <% } else if (userType === 'driver') { %>
+                <a class="btn btn-primary btn-lg" href="/g2">Manage G2 test</a>
+                <a class="btn btn-outline-light btn-lg" href="/g">Manage G test</a>
+              <% } else if (userType === 'examiner') { %>
+                <a class="btn btn-primary btn-lg" href="/examiner">Open examiner queue</a>
+              <% } else if (userType === 'admin') { %>
+                <a class="btn btn-primary btn-lg" href="/appointment">Add appointment slots</a>
+                <a class="btn btn-outline-light btn-lg" href="/checkDriverStatus">Review driver results</a>
+              <% } %>
             </div>
-            <!-- Divider-->
-            <hr class="my-4" />
-            <!-- Pager-->
-            <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts
-                →</a></div>
           </div>
         </div>
       </div>
+    </header>
 
-      <!-- Footer-->
-      <%- include('layouts/footer') -%>
-        <!-- JS-->
-        <%- include('layouts/scripts') -%>
+    <main>
+      <section class="home-section" aria-labelledby="portal-heading">
+        <div class="container px-4 px-lg-5">
+          <div class="home-section-heading">
+            <span class="home-kicker">One portal, three focused workflows</span>
+            <h2 id="portal-heading">Everything needed for test day</h2>
+            <p>Each role sees only the tools needed to move an appointment forward.</p>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-md-4">
+              <article class="portal-card h-100">
+                <span class="portal-icon"><i class="fas fa-car" aria-hidden="true"></i></span>
+                <h3>Drivers</h3>
+                <p>Complete vehicle details, choose an available slot, and review test results.</p>
+              </article>
+            </div>
+            <div class="col-md-4">
+              <article class="portal-card h-100">
+                <span class="portal-icon"><i class="fas fa-clipboard-check" aria-hidden="true"></i></span>
+                <h3>Examiners</h3>
+                <p>See the test queue, review driver details, and record comments and results.</p>
+              </article>
+            </div>
+            <div class="col-md-4">
+              <article class="portal-card h-100">
+                <span class="portal-icon"><i class="fas fa-calendar-check" aria-hidden="true"></i></span>
+                <h3>Administrators</h3>
+                <p>Publish appointment availability and review completed driver assessments.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="home-process" aria-labelledby="process-heading">
+        <div class="container px-4 px-lg-5">
+          <div class="home-section-heading text-start">
+            <span class="home-kicker">Driver journey</span>
+            <h2 id="process-heading">From registration to result</h2>
+          </div>
+          <div class="row g-4">
+            <div class="col-md-4">
+              <div class="process-step"><span>1</span><div><h3>Create your profile</h3><p>Add your licence and vehicle details.</p></div></div>
+            </div>
+            <div class="col-md-4">
+              <div class="process-step"><span>2</span><div><h3>Choose a test slot</h3><p>Select an available G2 or G appointment.</p></div></div>
+            </div>
+            <div class="col-md-4">
+              <div class="process-step"><span>3</span><div><h3>Review your result</h3><p>See the examiner's decision and comments.</p></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <%- include('layouts/footer') -%>
+    <%- include('layouts/scripts') -%>
   </body>
-
 </html>
