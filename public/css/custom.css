@@ -91,6 +91,11 @@
   border: 1px solid #ced4da;
 }
 
+#mainNav .nav-link.active {
+  border-bottom: 2px solid currentColor;
+  font-weight: 800;
+}
+
 .home-hero {
   min-height: 680px;
   margin-bottom: 0;

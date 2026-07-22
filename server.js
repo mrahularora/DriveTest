@@ -30,6 +30,7 @@ app.use(
 app.use((req, res, next) => {
   res.locals.loggedIn = Boolean(req.session.userId);
   res.locals.userType = req.session.userType || null;
+  res.locals.currentPath = req.path;
   next();
 });
 
