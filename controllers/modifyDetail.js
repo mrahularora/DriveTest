@@ -5,10 +5,13 @@ const { hash } = require("../utils/licenseCrypto");
 const isBookableDate = require("../utils/appointmentDate");
 
 const validDate = (value) => /^\d{4}-\d{2}-\d{2}$/.test(value || "") && !Number.isNaN(Date.parse(value));
+const formError = (res, user, testType, status, error) =>
+  res.status(status).render(testType === "G" ? "gtest" : "g2test", { user, error });
 
 module.exports = async (req, res, next) => {
+  let user;
   try {
-    const user = await UserAccount.findById(req.session.userId);
+    user = await UserAccount.findById(req.session.userId);
     if (!user) return res.redirect("/auth/logout");
 
     if (req.body.action === "car") {
@@ -16,7 +19,7 @@ module.exports = async (req, res, next) => {
       if (!req.body.make?.trim() || !req.body.model?.trim() ||
           !Number.isInteger(year) || year < 1900 || year > new Date().getFullYear() + 1 ||
           !req.body.plateNo?.trim()) {
-        return res.status(400).send("Enter valid car details.");
+        return formError(res, user, "G", 400, "Enter valid car details.");
       }
       await UserAccount.updateOne(
         { _id: user._id },
@@ -36,17 +39,17 @@ module.exports = async (req, res, next) => {
     const time = req.body.timeSlot;
 
     if (!["G2", "G"].includes(testType) || !isBookableDate(date) || !time) {
-      return res.status(400).send("A valid test type, current or future date, and time slot are required.");
+      return formError(res, user, testType, 400, "Select a valid test type, current or future date, and time slot.");
     }
     if (!(await Appointment.exists({ date, time }))) {
-      return res.status(400).send("That appointment slot is not offered.");
+      return formError(res, user, testType, 400, "That appointment slot is not offered.");
     }
     if (testType === "G" && !["G2", "G"].includes(user.qualified)) {
-      return res.status(403).send("Pass the G2 test before booking a G test.");
+      return formError(res, user, testType, 403, "Pass the G2 test before booking a G test.");
     }
 
     const conflict = await BookedTimeSlot.exists({ date, time, userId: { $ne: user._id } });
-    if (conflict) return res.status(409).send("That appointment slot was already booked.");
+    if (conflict) return formError(res, user, testType, 409, "That appointment slot was already booked.");
 
     const update = {
       appointmentDate: date,
@@ -66,11 +69,11 @@ module.exports = async (req, res, next) => {
           !/^[A-Z0-9]{8}$/.test(licenceNo || "") || !Number.isInteger(age) || age < 16 || age > 100 ||
           !validDate(req.body.dob) || !req.body.make?.trim() || !req.body.model?.trim() ||
           !Number.isInteger(year) || year < 1900 || year > currentYear + 1 || !req.body.plateNo?.trim()) {
-        return res.status(400).send("Enter valid personal, licence, car, and appointment details.");
+        return formError(res, user, testType, 400, "Enter valid personal, licence, car, and appointment details.");
       }
       const licenceHash = hash(licenceNo);
       if (await UserAccount.exists({ licenceHash, _id: { $ne: user._id } })) {
-        return res.status(409).send("Licence number is already registered.");
+        return formError(res, user, testType, 409, "Licence number is already registered.");
       }
       Object.assign(update, {
         firstName: req.body.firstName.trim(),
@@ -96,7 +99,9 @@ module.exports = async (req, res, next) => {
     await UserAccount.updateOne({ _id: user._id }, { $set: update }, { runValidators: true });
     res.redirect(testType === "G" ? "/g" : "/g2");
   } catch (error) {
-    if (error.code === 11000) return res.status(409).send("That appointment or licence is already taken.");
+    if (error.code === 11000 && user) {
+      return formError(res, user, req.body.testType, 409, "That appointment or licence is already taken.");
+    }
     next(error);
   }
 };

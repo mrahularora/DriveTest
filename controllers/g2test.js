@@ -4,7 +4,7 @@ module.exports = async (req, res, next) => {
   try {
     const user = await UserAccount.findById(req.session.userId);
     if (!user) return res.redirect("/auth/logout");
-    res.render("g2test", { user });
+    res.render("g2test", { user, error: "" });
   } catch (error) {
     next(error);
   }

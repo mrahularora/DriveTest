@@ -6,7 +6,9 @@ module.exports = async (req, res, next) => {
     const testType = req.params.testType;
     const passed = req.body.result === "pass";
     if (!["pass", "fail"].includes(req.body.result) || !["G2", "G"].includes(testType)) {
-      return res.status(400).send("Select pass or fail.");
+      const driverDetails = await UserAccount.findById(req.params.id);
+      if (!driverDetails) return res.status(404).render("pageNotFound");
+      return res.status(400).render("viewUserAppointment", { driverDetails, error: "Select pass or fail." });
     }
     if (!(await BookedTimeSlot.exists({ userId: req.params.id, testType }))) {
       return res.status(404).render("pageNotFound");

@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
       date: selectedDate,
     });
     res.json(fetchBookedTimeSlot);
-  } catch (err) {
-    res.status(404).send("Server Errors");
+  } catch (error) {
+    res.status(500).json({ error: "Unable to check booked time slots" });
   }
 };

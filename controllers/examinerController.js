@@ -36,6 +36,6 @@ module.exports = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching data:", error);
-    res.render("examiner", { appointments: [], error: "Error fetching data" });
+    res.status(500).render("examiner", { appointments: [], error: "Unable to load appointments.", message: "" });
   }
 };
