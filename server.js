@@ -42,6 +42,7 @@ const loginView = require("./controllers/login");
 const signUpView = require("./controllers/signUp");
 const appointmentView = require("./controllers/appointmentController");
 const pageNotFoundView = require("./controllers/notFound");
+const applicationError = require("./controllers/applicationError");
 const createNewAccount = require("./controllers/createNewAccount");
 const loginController = require("./controllers/loginUserAccount");
 const modifyUserDetails = require("./controllers/modifyDetail");
@@ -74,6 +75,7 @@ app.post("/admin/appointments", auth.adminMiddleware, addTimeSlot);
 app.post("/users/register", redirectIfAuthenticated, createNewAccount);
 app.post("/users/login", redirectIfAuthenticated, loginController);
 app.use(pageNotFoundView);
+app.use(applicationError);
 
 async function start() {
   await mongoose.connect(process.env.MONGODB_URI);
