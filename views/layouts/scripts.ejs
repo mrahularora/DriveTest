@@ -237,6 +237,41 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
+    document.querySelectorAll("[data-table-search]").forEach((search) => {
+      const table = document.querySelector(search.dataset.tableSearch);
+      const rows = [...table.tBodies[0].rows];
+      const count = document.querySelector(search.dataset.countTarget);
+
+      search.addEventListener("input", () => {
+        const query = search.value.trim().toLocaleLowerCase();
+        let visible = 0;
+        rows.forEach((row) => {
+          row.hidden = !row.textContent.toLocaleLowerCase().includes(query);
+          if (!row.hidden) visible += 1;
+        });
+        count.textContent = `${visible} appointment${visible === 1 ? "" : "s"} shown`;
+      });
+
+      table.querySelectorAll("[data-sort-column]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const column = Number(button.dataset.sortColumn);
+          const descending = button.closest("th").getAttribute("aria-sort") === "ascending";
+          rows.sort((left, right) => collator.compare(
+            left.cells[column].textContent.trim(),
+            right.cells[column].textContent.trim()
+          ) * (descending ? -1 : 1));
+          table.querySelectorAll("th[aria-sort]").forEach((heading) => heading.setAttribute("aria-sort", "none"));
+          button.closest("th").setAttribute("aria-sort", descending ? "descending" : "ascending");
+          table.tBodies[0].append(...rows);
+        });
+      });
+    });
+  });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
 
     function getTodayDate() {
 

@@ -38,19 +38,25 @@
         <h5>
           <%= message %>
         </h5>
-        <!-- Display a table with appointment details -->
+        <div class="row align-items-end mb-3">
+          <div class="col-md-6">
+            <label for="examinerAppointmentSearch" class="form-label">Search appointments</label>
+            <input type="search" class="form-control" id="examinerAppointmentSearch" placeholder="Name, vehicle, date, test type..." data-table-search="#examinerAppointments" data-count-target="#examinerAppointmentCount" />
+          </div>
+          <div class="col-md-6"><p class="mb-0 mt-2" id="examinerAppointmentCount" role="status"><%= appointments.length %> appointments shown</p></div>
+        </div>
         <div class="table-responsive">
-        <table class="table">
+        <table class="table table-hover align-middle" id="examinerAppointments">
           <caption class="visually-hidden">Driver appointments assigned to the examiner</caption>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Car Details</th>
-              <th>Appointment Date</th>
-              <th>Appointment Time</th>
-              <th>Test Type</th>
-              <th>Remarks</th>
-              <th>Action</th>
+              <th scope="col" aria-sort="none"><button type="button" class="btn btn-link p-0 fw-bold text-dark text-decoration-none" data-sort-column="0">Name</button></th>
+              <th scope="col" aria-sort="none"><button type="button" class="btn btn-link p-0 fw-bold text-dark text-decoration-none" data-sort-column="1">Car details</button></th>
+              <th scope="col" aria-sort="none"><button type="button" class="btn btn-link p-0 fw-bold text-dark text-decoration-none" data-sort-column="2">Appointment date</button></th>
+              <th scope="col" aria-sort="none"><button type="button" class="btn btn-link p-0 fw-bold text-dark text-decoration-none" data-sort-column="3">Appointment time</button></th>
+              <th scope="col" aria-sort="none"><button type="button" class="btn btn-link p-0 fw-bold text-dark text-decoration-none" data-sort-column="4">Test type</button></th>
+              <th scope="col">Remarks</th>
+              <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody>

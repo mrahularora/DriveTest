@@ -133,6 +133,25 @@ test("drivers see completed appointments and results", async () => {
   assert.match(html, /Safe drive/);
 });
 
+test("staff appointment tables are searchable, sortable, and responsive", async () => {
+  for (const file of ["examiner.ejs", "adminDriverView.ejs"]) {
+    const html = await ejs.renderFile(path.join(__dirname, "..", "views", file), {
+      loggedIn: true,
+      userType: file === "examiner.ejs" ? "examiner" : "admin",
+      currentPath: file === "examiner.ejs" ? "/examiner" : "/checkDriverStatus",
+      csrfToken: "test-token",
+      appointments: [],
+      error: "",
+      message: "",
+    });
+    assert.match(html, /class="table-responsive"/);
+    assert.match(html, /type="search"[^>]+data-table-search=/);
+    assert.match(html, /data-sort-column="0"/);
+    assert.match(html, /aria-sort="none"/);
+    assert.match(html, /new Intl\.Collator/);
+  }
+});
+
 test("all application views render", async () => {
   for (const [file, locals] of Object.entries(cases)) {
     const html = await ejs.renderFile(path.join(__dirname, "..", "views", file), {
