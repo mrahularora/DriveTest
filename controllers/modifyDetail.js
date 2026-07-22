@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Appointment = require("../models/Appointment");
 const BookedTimeSlot = require("../models/BookedTimeSlot");
 const UserAccount = require("../models/UserAccount");
@@ -91,12 +92,23 @@ module.exports = async (req, res, next) => {
       });
     }
 
-    await BookedTimeSlot.updateOne(
-      { userId: user._id },
-      { $set: { date, time, testType } },
-      { upsert: true, runValidators: true }
-    );
-    await UserAccount.updateOne({ _id: user._id }, { $set: update }, { runValidators: true });
+    const session = await mongoose.startSession();
+    try {
+      await session.withTransaction(async () => {
+        await BookedTimeSlot.updateOne(
+          { userId: user._id },
+          { $set: { date, time, testType } },
+          { upsert: true, runValidators: true, session }
+        );
+        await UserAccount.updateOne(
+          { _id: user._id },
+          { $set: update },
+          { runValidators: true, session }
+        );
+      });
+    } finally {
+      await session.endSession();
+    }
     res.redirect(testType === "G" ? "/g" : "/g2");
   } catch (error) {
     if (error.code === 11000 && user) {

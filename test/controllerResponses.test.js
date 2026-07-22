@@ -1,5 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const mongoose = require("mongoose");
+const Appointment = require("../models/Appointment");
 const BookedTimeSlot = require("../models/BookedTimeSlot");
 const UserAccount = require("../models/UserAccount");
 const checkTimeSlot = require("../controllers/checkTimeSlot");
@@ -68,4 +70,51 @@ test("examiner validation errors stay on the assessment form", async () => {
   assert.equal(res.statusCode, 400);
   assert.equal(res.view, "viewUserAppointment");
   assert.equal(res.locals.error, "Select pass or fail.");
+});
+
+test("booking and driver writes share one transaction", async () => {
+  const originals = {
+    startSession: mongoose.startSession,
+    findById: UserAccount.findById,
+    userUpdate: UserAccount.updateOne,
+    appointmentExists: Appointment.exists,
+    bookingExists: BookedTimeSlot.exists,
+    bookingUpdate: BookedTimeSlot.updateOne,
+  };
+  const session = {
+    withTransaction: async (work) => work(),
+    endSession: async () => { session.ended = true; },
+  };
+  let bookingSession;
+  let userSession;
+  mongoose.startSession = async () => session;
+  UserAccount.findById = async () => ({ _id: "driver", qualified: "G2" });
+  UserAccount.updateOne = async (filter, update, options) => { userSession = options.session; };
+  Appointment.exists = async () => true;
+  BookedTimeSlot.exists = async () => false;
+  BookedTimeSlot.updateOne = async (filter, update, options) => { bookingSession = options.session; };
+  const res = { redirect(path) { this.path = path; } };
+
+  try {
+    await modifyDetail(
+      {
+        session: { userId: "driver" },
+        body: { testType: "G", Gdate: "2999-01-01", timeSlot: "09:00" },
+      },
+      res,
+      assert.fail
+    );
+  } finally {
+    mongoose.startSession = originals.startSession;
+    UserAccount.findById = originals.findById;
+    UserAccount.updateOne = originals.userUpdate;
+    Appointment.exists = originals.appointmentExists;
+    BookedTimeSlot.exists = originals.bookingExists;
+    BookedTimeSlot.updateOne = originals.bookingUpdate;
+  }
+
+  assert.equal(bookingSession, session);
+  assert.equal(userSession, session);
+  assert.equal(session.ended, true);
+  assert.equal(res.path, "/g");
 });
