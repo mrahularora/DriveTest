@@ -31,6 +31,7 @@
 
                     <div class="my-4">
                       <form id="registrationForm" method="post" action="/users/register">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                         <div class="form-floating">
                           <input class="form-control" id="username" name="userName" type="text" placeholder="Username"
                             autocomplete="username" required />

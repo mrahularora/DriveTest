@@ -29,6 +29,7 @@
                   <div class="alert alert-danger" role="alert"><%= error %></div>
                 <% } %>
                 <form action="/edit" method="POST">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                   <!-- Section for Personal Details -->
                   <h5>Personal Details</h5>
                   <div class="form-floating">

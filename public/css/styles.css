@@ -10934,7 +10934,7 @@ blockquote {
   padding: 0.75rem;
   text-transform: uppercase;
 }
-#mainNav .navbar-nav > li.nav-item > a.nav-link {
+#mainNav .navbar-nav > li.nav-item .nav-link {
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.0625em;
@@ -10952,11 +10952,11 @@ blockquote {
   #mainNav .navbar-brand:hover {
     color: rgba(255, 255, 255, 0.8);
   }
-  #mainNav .navbar-nav > li.nav-item > a.nav-link {
+  #mainNav .navbar-nav > li.nav-item .nav-link {
     color: #fff;
   }
-  #mainNav .navbar-nav > li.nav-item > a.nav-link:focus,
-  #mainNav .navbar-nav > li.nav-item > a.nav-link:hover {
+  #mainNav .navbar-nav > li.nav-item .nav-link:focus,
+  #mainNav .navbar-nav > li.nav-item .nav-link:hover {
     color: rgba(255, 255, 255, 0.8);
   }
 }
@@ -10983,11 +10983,11 @@ blockquote {
   #mainNav.is-fixed .navbar-brand:hover {
     color: #0085a1;
   }
-  #mainNav.is-fixed .navbar-nav > li.nav-item > a {
+  #mainNav.is-fixed .navbar-nav > li.nav-item .nav-link {
     color: #212529;
   }
-  #mainNav.is-fixed .navbar-nav > li.nav-item > a:focus,
-  #mainNav.is-fixed .navbar-nav > li.nav-item > a:hover {
+  #mainNav.is-fixed .navbar-nav > li.nav-item .nav-link:focus,
+  #mainNav.is-fixed .navbar-nav > li.nav-item .nav-link:hover {
     color: #0085a1;
   }
   #mainNav.is-visible {

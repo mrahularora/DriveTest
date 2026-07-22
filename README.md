@@ -154,6 +154,7 @@ Mongoose creates these collections as application data is saved:
 - Sessions are stored in MongoDB so authenticated sessions survive server restarts.
 - Session cookies are HTTP-only and use `SameSite=Lax`.
 - Login attempts are rate-limited and responses include Helmet security headers.
+- State-changing requests require a session-bound CSRF token.
 - Driver, examiner, and administrator routes use role-based middleware.
 - Public registration always creates a driver account; staff roles must be provisioned directly by a database administrator.
 - `.env` and `node_modules` are excluded from Git.

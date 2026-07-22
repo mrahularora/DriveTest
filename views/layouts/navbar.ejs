@@ -39,7 +39,12 @@
         <% } %>
 
         <% if (loggedIn) { %>
-          <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/auth/logout">Log out</a></li>
+          <li class="nav-item">
+            <form action="/auth/logout" method="post">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button class="nav-link px-lg-3 py-3 py-lg-4 border-0 bg-transparent" type="submit">Log out</button>
+            </form>
+          </li>
         <% } else { %>
           <li class="nav-item">
             <a class="nav-link px-lg-3 py-3 py-lg-4<%= currentPath === '/login' ? ' active' : '' %>" href="/login"

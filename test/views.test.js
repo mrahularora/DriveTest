@@ -43,6 +43,7 @@ test("all application views render", async () => {
       loggedIn: false,
       userType: null,
       currentPath: "/",
+      csrfToken: "test-token",
       ...locals,
     });
     assert.equal((html.match(/<head>/g) || []).length, 1, `${file} must have one head`);
@@ -50,6 +51,9 @@ test("all application views render", async () => {
     const ids = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]));
     for (const match of html.matchAll(/<label[^>]+for="([^"]+)"/g)) {
       assert.equal(ids.has(match[1]), true, `${file} label must target #${match[1]}`);
+    }
+    for (const match of html.matchAll(/<form\b[^>]*method="post"[^>]*>[\s\S]*?<\/form>/gi)) {
+      assert.match(match[0], /name="_csrf"/, `${file} POST forms must include a CSRF token`);
     }
   }
 });
@@ -59,6 +63,7 @@ test("navigation shows role links and marks the current page", async () => {
     loggedIn: true,
     userType: "driver",
     currentPath: "/g2",
+    csrfToken: "test-token",
   });
   assert.match(driver, /aria-current="page">G2 Test<\/a>/);
   assert.match(driver, />G Test<\/a>/);
@@ -68,9 +73,12 @@ test("navigation shows role links and marks the current page", async () => {
     loggedIn: false,
     userType: null,
     currentPath: "/login",
+    csrfToken: "test-token",
   });
   assert.match(guest, /aria-current="page">Log in<\/a>/);
-  assert.doesNotMatch(guest, />Log out<\/a>/);
+  assert.match(driver, /action="\/auth\/logout" method="post"/);
+  assert.match(driver, /name="_csrf" value="test-token"/);
+  assert.doesNotMatch(guest, /action="\/auth\/logout"/);
 });
 
 test("footer has current product copy without placeholder links", async () => {
@@ -86,6 +94,7 @@ test("forms use alerts and driver results use status badges", async () => {
     currentPath: "/login",
     error: "Incorrect username or password.",
     success: "",
+    csrfToken: "test-token",
   });
   assert.match(login, /class="alert alert-danger"/);
 
@@ -95,6 +104,7 @@ test("forms use alerts and driver results use status badges", async () => {
     currentPath: "/checkDriverStatus",
     error: "",
     message: "",
+    csrfToken: "test-token",
     appointments: [{
       testType: "G2",
       userDetails: { ...user, status: "Passed", pass: true },
@@ -110,6 +120,7 @@ test("public signup does not expose staff roles", async () => {
     userType: null,
     currentPath: "/signup",
     error: "",
+    csrfToken: "test-token",
   });
   assert.doesNotMatch(html, /name="userType"/);
   assert.match(html, /New accounts are created for drivers\./);

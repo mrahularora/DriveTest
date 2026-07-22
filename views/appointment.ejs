@@ -32,6 +32,7 @@
 
       <!-- Date Input -->
       <form action="/admin/appointments/" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <div class="form-group">
           <label for="appointmentDate">Select Date:</label>
           <input

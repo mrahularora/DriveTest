@@ -61,6 +61,7 @@
                   <details class="mb-4">
                     <summary class="btn btn-outline-primary">Update Car Information</summary>
                     <form action="/edit" method="POST" class="mt-3">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                       <input type="hidden" name="action" value="car" />
                       <div class="form-floating">
                         <input class="form-control" id="carMake" name="make" value="<%- user.carDetails.make %>" required />
@@ -121,6 +122,7 @@
                                         <h5 style="color:green;">Congratulations! Your have Passed the G2 Test
                                           Successfully. You can book G Test Now.</h5>
                                         <form action="/edit" method="POST">
+                                          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                                           <input type="hidden" name="testType" value="G" />
                                           <div class="form-floating">
                                             <input type="date" name="Gdate" class="form-control"
@@ -144,6 +146,7 @@
                                             You have not qualified the test, please book again
                                           </h5>
                                           <form action="/edit" method="POST">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                                             <input type="hidden" name="testType" value="G" />
                                             <div class="form-floating">
                                               <input type="date" name="Gdate" class="form-control"

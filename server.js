@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const expressSession = require("express-session");
 const { MongoStore } = require("connect-mongo");
 const { secureHeaders, loginRateLimit } = require("./middleware/securityMiddleware");
+const csrfProtection = require("./middleware/csrfMiddleware");
 
 const app = express();
 app.set("view engine", "ejs");
@@ -31,6 +32,7 @@ app.use(
     },
   })
 );
+app.use(csrfProtection);
 app.use((req, res, next) => {
   res.locals.loggedIn = Boolean(req.session.userId);
   res.locals.userType = req.session.userType || null;
@@ -66,7 +68,7 @@ app.get("/signup", redirectIfAuthenticated, signUpView);
 app.get("/login", redirectIfAuthenticated, loginView);
 app.get("/g2", auth.driverMiddleware, g2TestView);
 app.get("/g", auth.driverMiddleware, gTestView);
-app.get("/auth/logout", logoutController);
+app.post("/auth/logout", logoutController);
 app.get("/appointment", auth.adminMiddleware, appointmentView);
 app.get("/examiner", auth.examinerMiddleware, examinerView);
 app.get("/checkAppointment/:date", auth.authUserMiddleware, checkAppointment);

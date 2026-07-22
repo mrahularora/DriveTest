@@ -11,6 +11,7 @@ const createAccount = require("../controllers/createNewAccount");
 const auth = require("../middleware/authMiddleware");
 const express = require("express");
 const { secureHeaders, loginRateLimit } = require("../middleware/securityMiddleware");
+const csrfProtection = require("../middleware/csrfMiddleware");
 
 const response = () => ({
   statusCode: 200,
@@ -222,4 +223,28 @@ test("security headers and login rate limiting protect authentication", async (t
   assert.equal(blocked.headers.get("x-content-type-options"), "nosniff");
   assert.equal(blocked.headers.get("x-frame-options"), "SAMEORIGIN");
   assert.ok(blocked.headers.get("ratelimit"));
+});
+
+test("CSRF protection rejects missing tokens and accepts the session token", () => {
+  const session = {};
+  let allowed = false;
+  csrfProtection({ method: "GET", session }, { locals: {} }, () => { allowed = true; });
+  assert.equal(allowed, true);
+  assert.match(session.csrfToken, /^[a-f0-9]{64}$/);
+
+  const rejected = {
+    locals: {},
+    status(code) { this.statusCode = code; return this; },
+    send(body) { this.body = body; },
+  };
+  csrfProtection({ method: "POST", session, body: {} }, rejected, assert.fail);
+  assert.equal(rejected.statusCode, 403);
+
+  allowed = false;
+  csrfProtection(
+    { method: "POST", session, body: { _csrf: session.csrfToken } },
+    { locals: {} },
+    () => { allowed = true; }
+  );
+  assert.equal(allowed, true);
 });
