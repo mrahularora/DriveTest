@@ -4,10 +4,15 @@ const BookedTimeSlot = require("../models/BookedTimeSlot");
 const UserAccount = require("../models/UserAccount");
 const { hash } = require("../utils/licenseCrypto");
 const isBookableDate = require("../utils/appointmentDate");
+const getDriverJourney = require("../utils/driverJourney");
 
 const validDate = (value) => /^\d{4}-\d{2}-\d{2}$/.test(value || "") && !Number.isNaN(Date.parse(value));
 const formError = (res, user, testType, status, error) =>
-  res.status(status).render(testType === "G" ? "gtest" : "g2test", { user, error });
+  res.status(status).render(testType === "G" ? "gtest" : "g2test", {
+    user,
+    error,
+    journey: getDriverJourney(user, testType === "G" ? "G" : "G2"),
+  });
 
 module.exports = async (req, res, next) => {
   let user;

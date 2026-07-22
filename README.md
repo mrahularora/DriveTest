@@ -9,6 +9,7 @@ A full-stack driving-test appointment system built with Node.js, Express, EJS, a
 - Create an account and securely sign in.
 - Change a password or recover an account with a one-time recovery code.
 - Enter and update personal, licence, and vehicle information.
+- See profile-completion progress and test eligibility guidance.
 - View appointment dates and available time slots.
 - Book G2 and G driving tests.
 - Update vehicle information from the G page.

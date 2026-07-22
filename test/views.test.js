@@ -2,6 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const path = require("node:path");
 const ejs = require("ejs");
+const getDriverJourney = require("../utils/driverJourney");
 const navbar = path.join(__dirname, "..", "views", "layouts", "navbar.ejs");
 const footer = path.join(__dirname, "..", "views", "layouts", "footer.ejs");
 const adminView = path.join(__dirname, "..", "views", "adminDriverView.ejs");
@@ -26,8 +27,12 @@ const cases = {
   "index.ejs": {},
   "login.ejs": { error: "", success: "" },
   "register.ejs": { error: "" },
-  "g2test.ejs": { user, error: "" },
-  "gtest.ejs": { user: { ...user, qualified: "G2" }, error: "" },
+  "g2test.ejs": { user, error: "", journey: getDriverJourney(user, "G2") },
+  "gtest.ejs": {
+    user: { ...user, qualified: "G2" },
+    error: "",
+    journey: getDriverJourney({ ...user, qualified: "G2" }, "G"),
+  },
   "appointment.ejs": { error: "", message: "" },
   "examiner.ejs": { appointments: [], error: "", message: "" },
   "adminDriverView.ejs": { appointments: [], error: "", message: "" },
@@ -38,6 +43,24 @@ const cases = {
   "account.ejs": { error: "", success: "", recoveryCode: "" },
   "recover.ejs": { error: "" },
 };
+
+test("driver journey reports profile progress and G eligibility", () => {
+  const complete = getDriverJourney(user, "G2");
+  assert.equal(complete.profile.percent, 100);
+  assert.equal(complete.canBook, true);
+
+  const incomplete = getDriverJourney({ ...user, firstName: "default", carDetails: {} }, "G2");
+  assert.equal(incomplete.profile.complete, false);
+  assert.match(incomplete.guidance, /first name/);
+
+  const gLocked = getDriverJourney(user, "G");
+  assert.equal(gLocked.canBook, false);
+  assert.match(gLocked.guidance, /Pass the G2 test/);
+
+  const g2Passed = getDriverJourney({ ...user, qualified: "G2" }, "G2");
+  assert.equal(g2Passed.canBook, false);
+  assert.match(g2Passed.guidance, /passed the G2 test/);
+});
 
 test("all application views render", async () => {
   for (const [file, locals] of Object.entries(cases)) {
