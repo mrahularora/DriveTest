@@ -234,6 +234,63 @@ test("examiner validation errors stay on the assessment form", async () => {
   assert.equal(res.locals.error, "Select pass or fail.");
 });
 
+test("examiner results preserve the completed appointment", async () => {
+  const originals = {
+    bookingFind: BookedTimeSlot.findOne,
+    userUpdate: UserAccount.updateOne,
+  };
+  let update;
+  BookedTimeSlot.findOne = async () => ({ date: "2999-01-01", time: "09:00" });
+  UserAccount.updateOne = async (filter, changes) => {
+    update = changes;
+    return { matchedCount: 1 };
+  };
+  const res = response();
+
+  try {
+    await examineAppointment({
+      params: { id: "driver", testType: "G2" },
+      body: { result: "pass", comment: "Safe drive" },
+    }, res, assert.fail);
+  } finally {
+    BookedTimeSlot.findOne = originals.bookingFind;
+    UserAccount.updateOne = originals.userUpdate;
+  }
+
+  assert.equal(update.$set.status, "Passed");
+  assert.equal(update.$push.appointmentHistory.date, "2999-01-01");
+  assert.equal(update.$push.appointmentHistory.comment, "Safe drive");
+  assert.equal(update.$push.appointmentHistory.completedAt instanceof Date, true);
+  assert.equal(res.path, "/examiner");
+});
+
+test("examiner results cannot be submitted twice", async () => {
+  const originals = {
+    bookingFind: BookedTimeSlot.findOne,
+    findById: UserAccount.findById,
+    userUpdate: UserAccount.updateOne,
+  };
+  BookedTimeSlot.findOne = async () => ({ date: "2999-01-01", time: "09:00" });
+  UserAccount.updateOne = async () => ({ matchedCount: 0 });
+  UserAccount.findById = async () => ({ _id: "driver", status: "Passed" });
+  const res = response();
+
+  try {
+    await examineAppointment({
+      params: { id: "driver", testType: "G2" },
+      body: { result: "pass", comment: "Duplicate" },
+    }, res, assert.fail);
+  } finally {
+    BookedTimeSlot.findOne = originals.bookingFind;
+    UserAccount.findById = originals.findById;
+    UserAccount.updateOne = originals.userUpdate;
+  }
+
+  assert.equal(res.statusCode, 409);
+  assert.equal(res.view, "viewUserAppointment");
+  assert.match(res.locals.error, /already been submitted/);
+});
+
 test("rescheduling and driver writes share one transaction", async () => {
   const originals = {
     startSession: mongoose.startSession,

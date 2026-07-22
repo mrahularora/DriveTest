@@ -21,6 +21,7 @@ const user = {
   pass: false,
   status: "Pending",
   testType: "G2",
+  appointmentHistory: [],
 };
 
 const cases = {
@@ -100,6 +101,36 @@ test("pending appointments offer reschedule and cancellation controls", async ()
   assert.match(html, /name="action" value="reschedule"/);
   assert.match(html, /name="action" value="cancel"/);
   assert.match(html, /Cancel appointment/);
+});
+
+test("drivers see completed appointments and results", async () => {
+  const completedUser = {
+    ...user,
+    qualified: "G2",
+    status: "Passed",
+    pass: true,
+    appointmentHistory: [{
+      testType: "G2",
+      date: "2026-07-20",
+      time: "09:00",
+      status: "Passed",
+      comment: "Safe drive",
+    }],
+  };
+  const html = await ejs.renderFile(path.join(__dirname, "..", "views", "g2test.ejs"), {
+    loggedIn: true,
+    userType: "driver",
+    currentPath: "/g2",
+    csrfToken: "test-token",
+    user: completedUser,
+    error: "",
+    success: "",
+    journey: getDriverJourney(completedUser, "G2"),
+  });
+  assert.match(html, /Test history/);
+  assert.match(html, /G2 test · 2026-07-20 at 09:00/);
+  assert.match(html, /class="badge bg-success">Passed<\/span>/);
+  assert.match(html, /Safe drive/);
 });
 
 test("all application views render", async () => {

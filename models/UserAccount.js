@@ -26,6 +26,15 @@ const UserAccountSchema = new mongoose.Schema(
     status: { type: String, enum: ["Pending", "Passed", "Failed"], default: "Pending" },
     testType: { type: String, enum: ["G2", "G"] },
     qualified: { type: String, enum: ["G2", "G"] },
+    appointmentHistory: [{
+      _id: false,
+      testType: { type: String, required: true, enum: ["G2", "G"] },
+      date: { type: String, required: true },
+      time: { type: String, required: true },
+      status: { type: String, required: true, enum: ["Passed", "Failed"] },
+      comment: { type: String, default: "" },
+      completedAt: { type: Date, default: Date.now },
+    }],
   },
   { toJSON: { getters: true }, toObject: { getters: true } }
 );
