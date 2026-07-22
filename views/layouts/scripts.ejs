@@ -61,27 +61,19 @@
     if (registrationForm) {
       registrationForm.addEventListener("submit", function (event) {
         event.preventDefault();
-        const userTypeInput = document.getElementById("userType");
         const usernameInput = document.getElementById("username");
         const passwordInput = document.getElementById("password");
         const confirmPasswordInput = document.getElementById("confirmPassword");
 
-        const userTypeError = document.querySelector(".userTypeError");
         const usernameError = document.querySelector(".usernameError");
         const passwordError = document.querySelector(".passwordError");
         const confirmPasswordError = document.querySelector(
           ".confirmPasswordError"
         );
 
-        userTypeError.textContent = "";
         usernameError.textContent = "";
         passwordError.textContent = "";
         confirmPasswordError.textContent = "";
-
-        if (!userTypeInput.value.trim()) {
-          userTypeError.textContent = "User type is required.";
-          return;
-        }
 
         if (!usernameInput.value.trim()) {
           usernameError.textContent = "An username or email is required.";

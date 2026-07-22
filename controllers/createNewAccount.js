@@ -3,13 +3,10 @@ const { hashPassword } = require("../utils/password");
 
 module.exports = async (req, res) => {
   const userName = req.body.userName?.trim();
-  const { password, confirmPassword, userType } = req.body;
+  const { password, confirmPassword } = req.body;
 
-  if (!userName || !password || !confirmPassword || !userType) {
+  if (!userName || !password || !confirmPassword) {
     return res.status(400).render("register", { error: "All fields are mandatory." });
-  }
-  if (!['driver', 'examiner', 'admin'].includes(userType)) {
-    return res.status(400).render("register", { error: "Invalid user type." });
   }
   if (userName.length < 4 || password.length < 4) {
     return res.status(400).render("register", { error: "Username and password need at least 4 characters." });
@@ -22,7 +19,7 @@ module.exports = async (req, res) => {
     await UserAccount.create({
       userName,
       password: await hashPassword(password),
-      userType,
+      userType: "driver",
     });
     res.render("login", { error: "", success: "Account created successfully." });
   } catch (error) {

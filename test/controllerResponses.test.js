@@ -7,6 +7,7 @@ const UserAccount = require("../models/UserAccount");
 const checkTimeSlot = require("../controllers/checkTimeSlot");
 const modifyDetail = require("../controllers/modifyDetail");
 const examineAppointment = require("../controllers/examinUserAppointment");
+const createAccount = require("../controllers/createNewAccount");
 const auth = require("../middleware/authMiddleware");
 
 const response = () => ({
@@ -46,6 +47,27 @@ test("authentication and role authorization protect staff routes", async () => {
   } finally {
     UserAccount.findById = findById;
   }
+});
+
+test("public registration cannot create staff accounts", async () => {
+  const create = UserAccount.create;
+  let account;
+  UserAccount.create = async (details) => { account = details; };
+  const res = response();
+  try {
+    await createAccount({
+      body: {
+        userName: "driver-test",
+        password: "safe-password",
+        confirmPassword: "safe-password",
+        userType: "admin",
+      },
+    }, res);
+  } finally {
+    UserAccount.create = create;
+  }
+  assert.equal(account.userType, "driver");
+  assert.equal(res.view, "login");
 });
 
 test("availability database errors return JSON with status 500", async () => {

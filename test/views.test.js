@@ -103,3 +103,14 @@ test("forms use alerts and driver results use status badges", async () => {
   assert.match(admin, /class="badge bg-success">Passed<\/span>/);
   assert.match(admin, />Issue licence<\/a>/);
 });
+
+test("public signup does not expose staff roles", async () => {
+  const html = await ejs.renderFile(path.join(__dirname, "..", "views", "register.ejs"), {
+    loggedIn: false,
+    userType: null,
+    currentPath: "/signup",
+    error: "",
+  });
+  assert.doesNotMatch(html, /name="userType"/);
+  assert.match(html, /New accounts are created for drivers\./);
+});

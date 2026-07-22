@@ -152,6 +152,7 @@ Mongoose creates these collections as application data is saved:
 - Licence numbers are encrypted with AES-256-GCM.
 - Session cookies are HTTP-only and use `SameSite=Lax`.
 - Driver, examiner, and administrator routes use role-based middleware.
+- Public registration always creates a driver account; staff roles must be provisioned directly by a database administrator.
 - `.env` and `node_modules` are excluded from Git.
 
 ## Troubleshooting
