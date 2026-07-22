@@ -22,6 +22,7 @@
 
         <div class="container mt-5">
             <h2>Driver Status List</h2>
+            <% if (error) { %><div class="alert alert-danger" role="alert"><%= error %></div><% } %>
             <h5>
                 <%= message %>
             </h5>
@@ -62,19 +63,23 @@
                             <td>
                                 <%= appointment.userDetails.comment %>
                             </td>
-                            <% if(appointment.userDetails.status=='Pending' ) { %>
-                                <td style="color: steelblue; font-weight: bold">Pending</td>
-                                <% } else if(appointment.userDetails.pass===true){ %>
-                                    <td style="color: green; font-weight: bold">Pass</td>
-                                    <td>
-                                        <a href="/admin/vendor/<%= appointment.userDetails._id %>/<%= appointment.userDetails.testType %>"
-                                            class="btn btn-primary">Issue Physical License</a>
-                                    </td>
-                                    <% } else if(appointment.userDetails.pass===false){ %>
-                                        <td style="color: red; font-weight: bold">Failed</td>
-                                        <% } else if(appointment.userDetails.status=='Pending' ) { %>
-                                            <td style="color: steelblue; font-weight: bold">Pending</td>
-                                            <% } %>
+                            <td>
+                                <% if (appointment.userDetails.status === 'Pending') { %>
+                                    <span class="badge bg-info text-dark">Pending</span>
+                                <% } else if (appointment.userDetails.pass === true) { %>
+                                    <span class="badge bg-success">Passed</span>
+                                <% } else { %>
+                                    <span class="badge bg-danger">Failed</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <% if (appointment.userDetails.pass === true) { %>
+                                    <a href="/admin/vendor/<%= appointment.userDetails._id %>/<%= appointment.userDetails.testType %>"
+                                        class="btn btn-primary btn-sm">Issue licence</a>
+                                <% } else { %>
+                                    <span class="text-muted" aria-label="No action available">&mdash;</span>
+                                <% } %>
+                            </td>
                         </tr>
                         <% }); %>
                 </tbody>

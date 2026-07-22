@@ -4,6 +4,7 @@ const path = require("node:path");
 const ejs = require("ejs");
 const navbar = path.join(__dirname, "..", "views", "layouts", "navbar.ejs");
 const footer = path.join(__dirname, "..", "views", "layouts", "footer.ejs");
+const adminView = path.join(__dirname, "..", "views", "adminDriverView.ejs");
 
 const user = {
   _id: "507f1f77bcf86cd799439011",
@@ -72,4 +73,29 @@ test("footer has current product copy without placeholder links", async () => {
   const html = await ejs.renderFile(footer);
   assert.match(html, new RegExp(`${new Date().getFullYear()} DriveTest Booking Portal`));
   assert.doesNotMatch(html, /href="#!"/);
+});
+
+test("forms use alerts and driver results use status badges", async () => {
+  const login = await ejs.renderFile(path.join(__dirname, "..", "views", "login.ejs"), {
+    loggedIn: false,
+    userType: null,
+    currentPath: "/login",
+    error: "Incorrect username or password.",
+    success: "",
+  });
+  assert.match(login, /class="alert alert-danger"/);
+
+  const admin = await ejs.renderFile(adminView, {
+    loggedIn: true,
+    userType: "admin",
+    currentPath: "/checkDriverStatus",
+    error: "",
+    message: "",
+    appointments: [{
+      testType: "G2",
+      userDetails: { ...user, status: "Passed", pass: true },
+    }],
+  });
+  assert.match(admin, /class="badge bg-success">Passed<\/span>/);
+  assert.match(admin, />Issue licence<\/a>/);
 });

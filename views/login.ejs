@@ -24,24 +24,10 @@
           <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-5">
               <% if (typeof error !=='undefined' && error.length> 1){ %>
-                <p style="
-                color: red;
-                font-weight: bold;
-                text-align: center;
-                font-size: 25px;
-              ">
-                  <%= error %>
-                </p>
+                <div class="alert alert-danger" role="alert"><%= error %></div>
                 <% }else if(typeof success !=='undefined' && success.length> 1){
                   %>
-                  <p style="
-                color: rgb(0, 188, 19);
-                font-weight: bold;
-                text-align: center;
-                font-size: 25px;
-              ">
-                    <%= success %>
-                  </p>
+                  <div class="alert alert-success" role="status"><%= success %></div>
                   <% } %>
 
                     <div class="my-3">

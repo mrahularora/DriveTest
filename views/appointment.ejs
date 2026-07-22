@@ -22,21 +22,12 @@
     <div class="container mt-5">
       <h2>Add Appointment Availability</h2>
       <% if (typeof error !== 'undefined' && error.length > 1){ %>
-      <p
-        style="
-          color: red;
-          font-weight: bold;
-          text-align: center;
-          font-size: 25px;
-        "
-      >
-        <%= error %>
-      </p>
+      <div class="alert alert-danger" role="alert"><%= error %></div>
       <% }else{ %>
       <p>Select appointment slots for a specific date</p>
       <% } %>
       <% if (typeof message !== 'undefined' && message) { %>
-        <p class="text-success fw-bold text-center"><%= message %></p>
+        <div class="alert alert-success" role="status"><%= message %></div>
       <% } %>
 
       <!-- Date Input -->

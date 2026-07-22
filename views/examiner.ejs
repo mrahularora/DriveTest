@@ -20,9 +20,10 @@
       </header>
       <!-- Filter Form -->
       <div class="container mt-3">
+        <% if (error) { %><div class="alert alert-danger" role="alert"><%= error %></div><% } %>
         <form action="/examiner" method="GET">
           <label for="testType">Filter by Test Type:</label>
-          <select id="testType" name="testType">
+          <select class="form-select mb-3" id="testType" name="testType">
             <option value="all">All</option>
             <option value="G2">G2 Test</option>
             <option value="G">G Test</option>
