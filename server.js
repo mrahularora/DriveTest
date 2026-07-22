@@ -62,10 +62,13 @@ const viewUserAppointment = require("./controllers/viewUserAppointmentDetails");
 const examineUserAppointment = require("./controllers/examinUserAppointment");
 const adminDriverView = require("./controllers/adminDriverViewController");
 const vendorPrinting = require("./controllers/vendorPrintingController");
+const account = require("./controllers/accountController");
 
 app.get("/", home);
 app.get("/signup", redirectIfAuthenticated, signUpView);
 app.get("/login", redirectIfAuthenticated, loginView);
+app.get("/recover", redirectIfAuthenticated, account.recoverView);
+app.get("/account", auth.authUserMiddleware, account.view);
 app.get("/g2", auth.driverMiddleware, g2TestView);
 app.get("/g", auth.driverMiddleware, gTestView);
 app.post("/auth/logout", logoutController);
@@ -81,6 +84,9 @@ app.post("/edit", auth.driverMiddleware, modifyUserDetails);
 app.post("/admin/appointments", auth.adminMiddleware, addTimeSlot);
 app.post("/users/register", redirectIfAuthenticated, createNewAccount);
 app.post("/users/login", loginRateLimit, redirectIfAuthenticated, loginController);
+app.post("/users/recover", loginRateLimit, redirectIfAuthenticated, account.recover);
+app.post("/account/password", auth.authUserMiddleware, account.changePassword);
+app.post("/account/recovery-code", auth.authUserMiddleware, account.generateRecoveryCode);
 app.use(pageNotFoundView);
 app.use(applicationError);
 

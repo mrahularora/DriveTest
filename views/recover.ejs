@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('layouts/head', { title: 'Recover Account' }); -%>
+<body>
+  <%- include('layouts/navbar'); -%>
+  <header class="modifiedMasthead">
+    <div class="container position-relative px-4 px-lg-5">
+      <div class="page-heading"><h1>Recover account</h1><span class="subheading">Use your saved recovery code</span></div>
+    </div>
+  </header>
+  <main class="mb-4">
+    <div class="container px-4 px-lg-5"><div class="row justify-content-center"><div class="col-md-8 col-lg-6">
+      <% if (error) { %><div class="alert alert-danger" role="alert"><%= error %></div><% } %>
+      <form action="/users/recover" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <div class="form-floating"><input class="form-control" id="recoveryUsername" name="userName" autocomplete="username" required /><label for="recoveryUsername">Username</label></div>
+        <div class="form-floating"><input class="form-control" id="recoveryCode" name="recoveryCode" autocomplete="off" required /><label for="recoveryCode">Recovery code</label></div>
+        <div class="form-floating"><input class="form-control" id="recoveryPassword" name="newPassword" type="password" minlength="8" autocomplete="new-password" required /><label for="recoveryPassword">New password</label></div>
+        <div class="form-floating"><input class="form-control" id="recoveryConfirmPassword" name="confirmPassword" type="password" minlength="8" autocomplete="new-password" required /><label for="recoveryConfirmPassword">Confirm new password</label></div>
+        <button class="btn btn-primary mt-3" type="submit">Reset password</button>
+        <a class="btn btn-link mt-3" href="/login">Back to login</a>
+      </form>
+    </div></div></div>
+  </main>
+  <%- include('layouts/footer') -%>
+  <%- include('layouts/scripts') -%>
+</body>
+</html>

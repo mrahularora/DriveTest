@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('layouts/head', { title: 'Account' }); -%>
+<body>
+  <%- include('layouts/navbar'); -%>
+  <header class="modifiedMasthead">
+    <div class="container position-relative px-4 px-lg-5">
+      <div class="page-heading"><h1>Account security</h1><span class="subheading">Manage your password and recovery code</span></div>
+    </div>
+  </header>
+  <main class="mb-4">
+    <div class="container px-4 px-lg-5"><div class="row justify-content-center"><div class="col-md-8 col-lg-6">
+      <% if (error) { %><div class="alert alert-danger" role="alert"><%= error %></div><% } %>
+      <% if (success) { %><div class="alert alert-success" role="status"><%= success %></div><% } %>
+      <% if (recoveryCode) { %>
+        <div class="alert alert-warning" role="status">Save this code now. It is shown once:<br /><code><%= recoveryCode %></code></div>
+      <% } %>
+
+      <h2>Change password</h2>
+      <form action="/account/password" method="post" class="mb-5">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <div class="form-floating"><input class="form-control" id="currentPassword" name="currentPassword" type="password" autocomplete="current-password" required /><label for="currentPassword">Current password</label></div>
+        <div class="form-floating"><input class="form-control" id="newPassword" name="newPassword" type="password" minlength="8" autocomplete="new-password" required /><label for="newPassword">New password</label></div>
+        <div class="form-floating"><input class="form-control" id="confirmNewPassword" name="confirmPassword" type="password" minlength="8" autocomplete="new-password" required /><label for="confirmNewPassword">Confirm new password</label></div>
+        <button class="btn btn-primary mt-3" type="submit">Change password</button>
+      </form>
+
+      <h2>Recovery code</h2>
+      <p>Generate a code to recover your account if you forget your password. A new code replaces the previous one.</p>
+      <form action="/account/recovery-code" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <button class="btn btn-outline-primary" type="submit">Generate recovery code</button>
+      </form>
+    </div></div></div>
+  </main>
+  <%- include('layouts/footer') -%>
+  <%- include('layouts/scripts') -%>
+</body>
+</html>

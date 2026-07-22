@@ -17,4 +17,19 @@ async function verifyPassword(password, stored) {
   return expected.length === actual.length && crypto.timingSafeEqual(expected, actual);
 }
 
-module.exports = { hashPassword, verifyPassword };
+function hashRecoveryCode(code) {
+  return crypto.createHash("sha256").update(code).digest("hex");
+}
+
+function createRecoveryCode() {
+  const code = crypto.randomBytes(16).toString("base64url");
+  return { code, hash: hashRecoveryCode(code) };
+}
+
+function verifyRecoveryCode(code, storedHash) {
+  const expected = Buffer.from(storedHash || "", "hex");
+  const actual = Buffer.from(hashRecoveryCode(code || ""), "hex");
+  return expected.length === actual.length && crypto.timingSafeEqual(expected, actual);
+}
+
+module.exports = { hashPassword, verifyPassword, createRecoveryCode, verifyRecoveryCode };

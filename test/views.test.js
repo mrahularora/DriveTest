@@ -35,6 +35,8 @@ const cases = {
   "vendor.ejs": { allDetails: { ...user, qualified: "G2" }, error: "" },
   "pageNotFound.ejs": {},
   "userNotFound.ejs": {},
+  "account.ejs": { error: "", success: "", recoveryCode: "" },
+  "recover.ejs": { error: "" },
 };
 
 test("all application views render", async () => {
@@ -67,6 +69,7 @@ test("navigation shows role links and marks the current page", async () => {
   });
   assert.match(driver, /aria-current="page">G2 Test<\/a>/);
   assert.match(driver, />G Test<\/a>/);
+  assert.match(driver, />Account<\/a>/);
   assert.doesNotMatch(driver, />Availability<\/a>/);
 
   const guest = await ejs.renderFile(navbar, {

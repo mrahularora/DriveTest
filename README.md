@@ -7,6 +7,7 @@ A full-stack driving-test appointment system built with Node.js, Express, EJS, a
 ### Driver
 
 - Create an account and securely sign in.
+- Change a password or recover an account with a one-time recovery code.
 - Enter and update personal, licence, and vehicle information.
 - View appointment dates and available time slots.
 - Book G2 and G driving tests.
@@ -155,6 +156,7 @@ Mongoose creates these collections as application data is saved:
 - Session cookies are HTTP-only and use `SameSite=Lax`.
 - Login attempts are rate-limited and responses include Helmet security headers.
 - State-changing requests require a session-bound CSRF token.
+- Password changes require the current password; one-time recovery codes support account recovery without storing email addresses.
 - Driver, examiner, and administrator routes use role-based middleware.
 - Public registration always creates a driver account; staff roles must be provisioned directly by a database administrator.
 - `.env` and `node_modules` are excluded from Git.

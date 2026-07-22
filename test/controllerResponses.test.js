@@ -12,6 +12,8 @@ const auth = require("../middleware/authMiddleware");
 const express = require("express");
 const { secureHeaders, loginRateLimit } = require("../middleware/securityMiddleware");
 const csrfProtection = require("../middleware/csrfMiddleware");
+const accountController = require("../controllers/accountController");
+const { hashPassword, verifyPassword, verifyRecoveryCode, createRecoveryCode } = require("../utils/password");
 
 const response = () => ({
   statusCode: 200,
@@ -71,6 +73,57 @@ test("public registration cannot create staff accounts", async () => {
   }
   assert.equal(account.userType, "driver");
   assert.equal(res.view, "login");
+  const recoveryCode = res.locals.success.match(/: (\S+)$/)[1];
+  assert.equal(verifyRecoveryCode(recoveryCode, account.recoveryCodeHash), true);
+});
+
+test("password changes require the current password and end the session", async () => {
+  const findById = UserAccount.findById;
+  const user = { password: await hashPassword("old-password"), async save() {} };
+  UserAccount.findById = async () => user;
+  const req = {
+    session: {
+      userId: "driver",
+      destroy(callback) { this.destroyed = true; callback(); },
+    },
+    body: {
+      currentPassword: "old-password",
+      newPassword: "new-password",
+      confirmPassword: "new-password",
+    },
+  };
+  const res = response();
+  try {
+    await accountController.changePassword(req, res, assert.fail);
+  } finally {
+    UserAccount.findById = findById;
+  }
+  assert.equal(await verifyPassword("new-password", user.password), true);
+  assert.equal(req.session.destroyed, true);
+  assert.equal(res.path, "/login?changed=1");
+});
+
+test("account recovery consumes the recovery code", async () => {
+  const findOne = UserAccount.findOne;
+  const recovery = createRecoveryCode();
+  const user = { recoveryCodeHash: recovery.hash, async save() {} };
+  UserAccount.findOne = () => ({ select: async () => user });
+  const res = response();
+  try {
+    await accountController.recover({
+      body: {
+        userName: "driver-test",
+        recoveryCode: recovery.code,
+        newPassword: "reset-password",
+        confirmPassword: "reset-password",
+      },
+    }, res, assert.fail);
+  } finally {
+    UserAccount.findOne = findOne;
+  }
+  assert.equal(await verifyPassword("reset-password", user.password), true);
+  assert.equal(user.recoveryCodeHash, undefined);
+  assert.equal(res.path, "/login?reset=1");
 });
 
 test("availability database errors return JSON with status 500", async () => {

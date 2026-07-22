@@ -12,6 +12,7 @@ const UserAccountSchema = new mongoose.Schema(
     userType: { type: String, required: true, enum: ["driver", "examiner", "admin"] },
     userName: { type: String, required: true, unique: true, trim: true },
     password: { type: String, required: true },
+    recoveryCodeHash: { type: String, select: false },
     carDetails: {
       make: { type: String, default: "default" },
       model: { type: String, default: "default" },
