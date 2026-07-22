@@ -31,6 +31,7 @@ const cases = {
   "gtest.ejs": {
     user: { ...user, qualified: "G2" },
     error: "",
+    success: "",
     journey: getDriverJourney({ ...user, qualified: "G2" }, "G"),
   },
   "appointment.ejs": { error: "", message: "" },
@@ -80,6 +81,8 @@ test("G2 profile and booking fields use separate forms", async () => {
   assert.ok(bookingForm);
   assert.doesNotMatch(profileForm, /name="G2date"/);
   assert.doesNotMatch(bookingForm, /name="firstName"/);
+  assert.match(bookingForm, /Choose a date to load available times\./);
+  assert.match(bookingForm, /type="submit" disabled/);
 });
 
 test("all application views render", async () => {

@@ -278,7 +278,7 @@ test("booking and driver writes share one transaction", async () => {
   assert.equal(bookingSession, session);
   assert.equal(userSession, session);
   assert.equal(session.ended, true);
-  assert.equal(res.path, "/g");
+  assert.equal(res.path, "/g?booked=1");
 });
 
 test("booking conflicts return status 409 before any write", async () => {

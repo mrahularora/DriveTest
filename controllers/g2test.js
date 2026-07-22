@@ -8,7 +8,9 @@ module.exports = async (req, res, next) => {
     res.render("g2test", {
       user,
       error: "",
-      success: req.query.profile === "saved" ? "Profile saved." : "",
+      success: req.query.booked === "1"
+        ? "Your G2 appointment is confirmed."
+        : req.query.profile === "saved" ? "Profile saved." : "",
       journey: getDriverJourney(user, "G2"),
     });
   } catch (error) {

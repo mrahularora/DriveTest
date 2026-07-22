@@ -69,12 +69,12 @@
                         <input type="date" name="G2date" class="form-control" id="bookingAppointmentDate" onchange="getTimeSlot('<%- user._id %>')" required />
                         <label for="bookingAppointmentDate">Select G2 appointment date</label>
                       </div>
-                      <h3 class="h5" id="headerTimeSlot"></h3>
+                      <p class="mt-3" id="headerTimeSlot" role="status" aria-live="polite">Choose a date to load available times.</p>
                       <div class="mt-3" id="timeSlotsSection" style="display: none">
                         <h3 class="h5">Select a time</h3>
-                        <div class="form-check form-check-inline" id="selectSlots"></div>
+                        <div id="selectSlots"></div>
                       </div>
-                      <button class="btn btn-primary mt-3" type="submit">Book G2 test</button>
+                      <button class="btn btn-primary mt-3" type="submit" disabled>Book G2 test</button>
                     </form>
                   <% } %>
                 </section>

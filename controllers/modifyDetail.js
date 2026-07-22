@@ -124,7 +124,7 @@ module.exports = async (req, res, next) => {
     } finally {
       await session.endSession();
     }
-    res.redirect(testType === "G" ? "/g" : "/g2");
+    res.redirect(testType === "G" ? "/g?booked=1" : "/g2?booked=1");
   } catch (error) {
     if (error.code === 11000 && user) {
       return formError(res, user, req.body.testType, 409, "That appointment or licence is already taken.");

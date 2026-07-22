@@ -29,6 +29,9 @@
                 <% if (error) { %>
                   <div class="alert alert-danger" role="alert"><%= error %></div>
                 <% } %>
+                <% if (success) { %>
+                  <div class="alert alert-success" role="status"><%= success %></div>
+                <% } %>
                 <h2>Driver Information</h2>
                 <div id="user-info">
                   <p>
@@ -128,17 +131,17 @@
                                           <div class="form-floating">
                                             <input type="date" name="Gdate" class="form-control"
                                               id="bookingAppointmentDate" value="<%- user.appointmentDate %>"
-                                              onchange="getTimeSlot('<%- user._id %>')" />
+                                              onchange="getTimeSlot('<%- user._id %>')" required />
                                             <label for="bookingAppointmentDate">Select G Appointment Date:</label>
                                           </div>
-                                          <h5 id="headerTimeSlot"></h5>
+                                          <p class="mt-3" id="headerTimeSlot" role="status" aria-live="polite">Choose a date to load available times.</p>
                                           <div class="mt-3" id="timeSlotsSection" style="display: none">
                                             <h5>Select Time Slots:</h5>
-                                            <div class="form-check form-check-inline" id="selectSlots"></div>
+                                            <div id="selectSlots"></div>
                                           </div>
                                           <br />
                                           <button class="btn btn-primary text-uppercase" id="submitButton"
-                                            type="submit">
+                                            type="submit" disabled>
                                             Book Appointment
                                           </button>
                                         </form>
@@ -152,17 +155,17 @@
                                             <div class="form-floating">
                                               <input type="date" name="Gdate" class="form-control"
                                                 id="bookingAppointmentDate" value="<%- user.appointmentDate %>"
-                                                onchange="getTimeSlot('<%- user._id %>')" />
+                                                onchange="getTimeSlot('<%- user._id %>')" required />
                                               <label for="bookingAppointmentDate">Select G Appointment Date:</label>
                                             </div>
-                                            <h5 id="headerTimeSlot"></h5>
+                                            <p class="mt-3" id="headerTimeSlot" role="status" aria-live="polite">Choose a date to load available times.</p>
                                             <div class="mt-3" id="timeSlotsSection" style="display: none">
                                               <h5>Select Time Slots:</h5>
-                                              <div class="form-check form-check-inline" id="selectSlots"></div>
+                                              <div id="selectSlots"></div>
                                             </div>
                                             <br />
                                             <button class="btn btn-primary text-uppercase" id="submitButton"
-                                              type="submit">
+                                              type="submit" disabled>
                                               Book Appointment
                                             </button>
                                           </form>

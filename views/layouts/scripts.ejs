@@ -171,100 +171,66 @@
 </script>
 <script>
   async function getTimeSlot(sessionId) {
-    const form = document.querySelector("form");
+    const dateInput = document.getElementById("bookingAppointmentDate");
     const selectSlotList = document.getElementById("selectSlots");
     const timeSlotsSection = document.getElementById("timeSlotsSection");
     const headerTime = document.getElementById("headerTimeSlot");
+    const form = dateInput.closest("form");
+    const submitButton = form.querySelector('button[type="submit"]');
+    const selectedDate = dateInput.value;
 
-    const selectedDate = document.getElementById(
-      "bookingAppointmentDate"
-    ).value;
+    selectSlotList.replaceChildren();
+    timeSlotsSection.style.display = "none";
+    submitButton.disabled = true;
+    headerTime.textContent = "Loading available times...";
 
     try {
-      const response = await fetch(`checkAppointment/${selectedDate}`);
+      const [response, bookedResponse] = await Promise.all([
+        fetch(`/checkAppointment/${selectedDate}`),
+        fetch(`/checkTimeSlotAvailable/${selectedDate}`),
+      ]);
 
-      if (!response.ok) {
-        timeSlotsSection.style.display = "none";
-        headerTime.innerHTML = "No Time Slot Available";
+      if (response.status === 404) {
+        headerTime.textContent = "No appointment times are offered for this date.";
+        return;
+      }
+      if (!response.ok || !bookedResponse.ok) throw new Error("Unable to load appointments");
+
+      const offered = (await response.json()).time || [];
+      const booked = await bookedResponse.json();
+      const available = offered.filter((slot) => !booked.some((item) =>
+        item.time === slot && String(item.userId) !== String(sessionId)
+      ));
+
+      if (!available.length) {
+        headerTime.textContent = "No available times remain for this date. Choose another date.";
         return;
       }
 
-      const selectSlots = await response.json();
-
-      const responseTimeSlotBooked = await fetch(
-        `checkTimeSlotAvailable/${selectedDate}`
-      );
-      if (!responseTimeSlotBooked.ok) {
-        throw new Error(
-          `Error fetching time slots. Status: ${responseTimeSlotBooked.status}`
-        );
-      }
-
-      const timeSlotBooked = await responseTimeSlotBooked.json();
-
-      const jsonSlot = selectSlots.time;
-      let result = [];
-
-      for (let i in jsonSlot) {
-        result.push(jsonSlot[i]);
-      }
-
-      // Display selected slots
-      selectSlotList.innerHTML = "";
-
-      result.forEach((slot) => {
+      available.forEach((slot) => {
         const taskDiv = document.createElement("div");
         const radioInput = document.createElement("input");
-        headerTime.innerHTML = "";
+        const id = `slot-${slot.replace(":", "-")}`;
+        taskDiv.className = "form-check form-check-inline";
+        radioInput.className = "form-check-input";
         radioInput.type = "radio";
         radioInput.name = "timeSlot";
-        radioInput.id = slot;
+        radioInput.id = id;
         radioInput.value = slot;
+        radioInput.required = true;
         const label = document.createElement("label");
-        label.htmlFor = slot;
+        label.className = "form-check-label";
+        label.htmlFor = id;
         label.textContent = slot;
-
-        for (let i in timeSlotBooked) {
-          if (timeSlotBooked.length != 0 && timeSlotBooked[i].time === slot) {
-            if (timeSlotBooked[i].userId == sessionId) {
-              radioInput.checked = true;
-              break;
-            }
-            radioInput.disabled = true; // Disable the radio button if the time slot is booked
-          }
-        }
-
+        radioInput.addEventListener("change", () => { submitButton.disabled = false; });
         taskDiv.appendChild(radioInput);
         taskDiv.appendChild(label);
-
         selectSlotList.appendChild(taskDiv);
       });
-
-      if (result.length > 0) {
-        timeSlotsSection.style.display = "block";
-      } else {
-        timeSlotsSection.style.display = "none";
-      }
-
-      document.addEventListener("DOMContentLoaded", function () {
-        const form = document.querySelector("form");
-        if (form) {
-          form.addEventListener("change", function (event) {
-            if (event.target.type === "radio" && event.target.checked) {
-              const selectedRadio = event.target;
-              const radioButtons = form.querySelectorAll('input[type="radio"]');
-
-              radioButtons.forEach((radio) => {
-                if (radio !== selectedRadio) {
-                  radio.checked = false;
-                }
-              });
-            }
-          });
-        }
-      });
-    } catch (err) {
-      console.error("Internal Error:", err.message);
+      headerTime.textContent = "Choose an available time.";
+      timeSlotsSection.style.display = "block";
+    } catch (error) {
+      headerTime.textContent = "Unable to load appointment times. Please try again.";
     }
   }
 </script>
