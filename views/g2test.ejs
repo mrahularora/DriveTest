@@ -29,135 +29,55 @@
                 <% if (error) { %>
                   <div class="alert alert-danger" role="alert"><%= error %></div>
                 <% } %>
-                <form action="/edit" method="POST">
+                <% if (success) { %>
+                  <div class="alert alert-success" role="status"><%= success %></div>
+                <% } %>
+                <form action="/edit" method="POST" class="mb-5">
                   <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                  <!-- Section for Personal Details -->
-                  <h5>Personal Details</h5>
-                  <div class="form-floating">
-                    <input class="form-control" id="firstname" name="firstName" type="text"
-                      value="<%- user.firstName -%>" placeholder="Enter your First Name..." required />
-                    <label for="firstname">First Name</label>
-                    <div class="invalid-feedback">First name is required.</div>
-                  </div>
-                  <div class="form-floating">
-                    <input class="form-control" id="lastname" name="lastName" type="text"
-                      value="<%- user.lastName -%>" placeholder="Enter your last name..." required />
-                    <label for="lastname">Last Name</label>
-                    <div class="invalid-feedback">Last name is required.</div>
-                  </div>
-                  <div class="form-floating">
-                    <input class="form-control" id="LicenseNo" name="licenceNo" type="text"
-                      value="<%- user.licenceNo -%>" minlength="8" maxlength="8" pattern="[A-Za-z0-9]{8}"
-                      placeholder="Enter your licence number." required />
-                    <label for="LicenseNo">Licence Number</label>
-                    <div class="invalid-feedback">
-                      License number is required.
-                    </div>
-                  </div>
-                  <div class="form-floating">
-                    <input class="form-control" id="Age" name="age" type="number" min="16" max="100"
-                      value="<%- user.age -%>" placeholder="Enter your age" required />
-                    <label for="Age">Age</label>
-                    <div class="invalid-feedback">Age is required.</div>
-                  </div>
-                  <div class="form-floating">
-                    <input class="form-control" id="dob" name="dob" type="date"
-                      value="<%- user.dob ? user.dob.toISOString().slice(0, 10) : '' -%>" required />
-                    <label for="dob">Date of Birth</label>
-                  </div>
-                  <br />
+                  <input type="hidden" name="action" value="profile" />
+                  <h2 class="h4">Personal details</h2>
+                  <div class="form-floating"><input class="form-control" id="firstname" name="firstName" value="<%- user.firstName === 'default' ? '' : user.firstName %>" required /><label for="firstname">First name</label></div>
+                  <div class="form-floating"><input class="form-control" id="lastname" name="lastName" value="<%- user.lastName === 'default' ? '' : user.lastName %>" required /><label for="lastname">Last name</label></div>
+                  <div class="form-floating"><input class="form-control" id="LicenseNo" name="licenceNo" value="<%- user.licenceNo === 'default' ? '' : user.licenceNo %>" minlength="8" maxlength="8" pattern="[A-Za-z0-9]{8}" required /><label for="LicenseNo">Licence number</label></div>
+                  <div class="form-floating"><input class="form-control" id="Age" name="age" type="number" min="16" max="100" value="<%- user.age || '' %>" required /><label for="Age">Age</label></div>
+                  <div class="form-floating"><input class="form-control" id="dob" name="dob" type="date" value="<%- user.dob ? user.dob.toISOString().slice(0, 10) : '' %>" required /><label for="dob">Date of birth</label></div>
 
-                  <!-- Section for Car Details -->
-                  <h5>Car Details</h5>
-
-                  <div class="form-floating">
-                    <input class="form-control" id="make" name="make" type="text"
-                      value="<%- user.carDetails.make -%>" placeholder="Enter your car make" required />
-                    <label for="make">Make</label>
-                    <div class="invalid-feedback">Car Make is required.</div>
-                  </div>
-                  <div class="form-floating">
-                    <input class="form-control" id="model" name="model" value="<%- user.carDetails.model -%>"
-                      type="text" placeholder="Enter your car model" required />
-                    <label for="model">Model</label>
-                    <div class="invalid-feedback">Car Model is required.</div>
-                  </div>
-                  <div class="form-floating">
-                    <input class="form-control" id="year" name="year" value="<%- user.carDetails.year -%>"
-                      type="number" placeholder="Enter your car year" required />
-                    <label for="year">Year</label>
-                    <div class="invalid-feedback">Car Year is required.</div>
-                  </div>
-                  <div class="form-floating">
-                    <input class="form-control" id="plateno" name="plateNo"
-                      value="<%- user.carDetails.plateNo -%>" type="text"
-                      placeholder="Enter your car plate number" required />
-                    <label for="plateno">Plate Number</label>
-                    <div class="invalid-feedback">Plate Number is required.</div>
-                  </div>
-                  <br />
-                  <% if (user.testType==="G2" && user.status ==="Failed" ) { %>
-                    <h5>G2 Result</h5>
-
-                    <p style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:red;">You did not pass the G2 test on <%= user.appointmentDate %> at <%= user.appointmentTime %>. You can book another appointment.</p>
-
-                    <% } else if (user.testType==="G2" && user.appointmentDate) { %>
-                    <h5>G2 Appointment Details</h5>
-
-                    <p>Appointment Date: <%= user.appointmentDate %>
-                    </p>
-                    <p>Appointment Time: <%= user.appointmentTime %>
-                    </p>
-
-                    <% } %>
-                      <% if (user.status==="Pending" && user.appointmentDate) { %>
-                        <% if (user.qualified !=="G2" ) { %>
-                          <h5 style="color:green;">Your time slot has been booked</h5><br />
-                          <% } else { %>
-                            <input type="hidden" name="testType" value="G2" />
-                            <div class="form-floating">
-                              <input type="date" name="G2date" class="form-control" id="bookingAppointmentDate"
-                                value="<%- user.appointmentDate %>"
-                                onchange="getTimeSlot('<%- user._id %>')" />
-
-                              <label for="bookingAppointmentDate">Select G2 Appointment Date:</label>
-                            </div>
-                            <h5 id="headerTimeSlot"></h5>
-                            <div class="mt-3" id="timeSlotsSection" style="display: none">
-                              <h5>Select Time Slots:</h5>
-                              <div class="form-check form-check-inline" id="selectSlots"></div>
-                            </div>
-                            <br />
-                            <% } %>
-                              <% } else if (user.pass===true && user.testType==="G2" ) { %>
-                                <h5 style="color:green;">Congratulations!! You have passed your G2 Test</h5>
-                                <% if (user.comment) { %>
-                                  <p>Examiner Comment: <b>
-                                      <%= user.comment %>
-                                    </b></p>
-                                  <% } %>
-                                    <% } else { %>
-
-                                      <input type="hidden" name="testType" value="G2" />
-                                      <div class="form-floating">
-                                        <input type="date" name="G2date" class="form-control"
-                                          id="bookingAppointmentDate" value="<%- user.appointmentDate %>"
-                                          onchange="getTimeSlot('<%- user._id %>')" />
-
-                                        <label for="bookingAppointmentDate">Select G2 Appointment Date:</label>
-                                      </div>
-                                      <h5 id="headerTimeSlot"></h5>
-                                      <div class="mt-3" id="timeSlotsSection" style="display: none">
-                                        <h5>Select Time Slots:</h5>
-                                        <div class="form-check form-check-inline" id="selectSlots"></div>
-                                      </div>
-                                      <br />
-
-                                      <% } %>
-                                        <button class="btn btn-primary text-uppercase" id="submitButton" type="submit">
-                                          Update
-                                        </button>
+                  <h2 class="h4 mt-4">Vehicle details</h2>
+                  <div class="form-floating"><input class="form-control" id="make" name="make" value="<%- user.carDetails.make === 'default' ? '' : user.carDetails.make %>" required /><label for="make">Make</label></div>
+                  <div class="form-floating"><input class="form-control" id="model" name="model" value="<%- user.carDetails.model === 'default' ? '' : user.carDetails.model %>" required /><label for="model">Model</label></div>
+                  <div class="form-floating"><input class="form-control" id="year" name="year" type="number" min="1900" value="<%- user.carDetails.year || '' %>" required /><label for="year">Year</label></div>
+                  <div class="form-floating"><input class="form-control" id="plateno" name="plateNo" value="<%- user.carDetails.plateNo === 'default' ? '' : user.carDetails.plateNo %>" required /><label for="plateno">Plate number</label></div>
+                  <button class="btn btn-primary mt-3" type="submit">Save profile</button>
                 </form>
+
+                <section aria-labelledby="g2-booking-heading">
+                  <h2 class="h4" id="g2-booking-heading">G2 appointment</h2>
+                  <% if (user.testType === "G2" && user.appointmentDate) { %>
+                    <div class="card mb-3"><div class="card-body">
+                      <p class="mb-1"><strong>Date:</strong> <%= user.appointmentDate %></p>
+                      <p class="mb-1"><strong>Time:</strong> <%= user.appointmentTime %></p>
+                      <p class="mb-0"><strong>Status:</strong> <span class="badge <%= user.status === 'Passed' ? 'bg-success' : user.status === 'Failed' ? 'bg-danger' : 'bg-warning text-dark' %>"><%= user.status %></span></p>
+                      <% if (user.comment) { %><p class="mt-3 mb-0"><strong>Examiner comment:</strong> <%= user.comment %></p><% } %>
+                    </div></div>
+                  <% } %>
+
+                  <% if (journey.canBook) { %>
+                    <form action="/edit" method="POST">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                      <input type="hidden" name="testType" value="G2" />
+                      <div class="form-floating">
+                        <input type="date" name="G2date" class="form-control" id="bookingAppointmentDate" onchange="getTimeSlot('<%- user._id %>')" required />
+                        <label for="bookingAppointmentDate">Select G2 appointment date</label>
+                      </div>
+                      <h3 class="h5" id="headerTimeSlot"></h3>
+                      <div class="mt-3" id="timeSlotsSection" style="display: none">
+                        <h3 class="h5">Select a time</h3>
+                        <div class="form-check form-check-inline" id="selectSlots"></div>
+                      </div>
+                      <button class="btn btn-primary mt-3" type="submit">Book G2 test</button>
+                    </form>
+                  <% } %>
+                </section>
               </div>
             </div>
           </div>

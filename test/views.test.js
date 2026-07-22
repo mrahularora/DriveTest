@@ -27,7 +27,7 @@ const cases = {
   "index.ejs": {},
   "login.ejs": { error: "", success: "" },
   "register.ejs": { error: "" },
-  "g2test.ejs": { user, error: "", journey: getDriverJourney(user, "G2") },
+  "g2test.ejs": { user, error: "", success: "", journey: getDriverJourney(user, "G2") },
   "gtest.ejs": {
     user: { ...user, qualified: "G2" },
     error: "",
@@ -60,6 +60,26 @@ test("driver journey reports profile progress and G eligibility", () => {
   const g2Passed = getDriverJourney({ ...user, qualified: "G2" }, "G2");
   assert.equal(g2Passed.canBook, false);
   assert.match(g2Passed.guidance, /passed the G2 test/);
+});
+
+test("G2 profile and booking fields use separate forms", async () => {
+  const html = await ejs.renderFile(path.join(__dirname, "..", "views", "g2test.ejs"), {
+    loggedIn: true,
+    userType: "driver",
+    currentPath: "/g2",
+    csrfToken: "test-token",
+    user,
+    error: "",
+    success: "",
+    journey: getDriverJourney(user, "G2"),
+  });
+  const forms = [...html.matchAll(/<form\b[\s\S]*?<\/form>/gi)].map((match) => match[0]);
+  const profileForm = forms.find((form) => form.includes('value="profile"'));
+  const bookingForm = forms.find((form) => form.includes('value="G2"'));
+  assert.ok(profileForm);
+  assert.ok(bookingForm);
+  assert.doesNotMatch(profileForm, /name="G2date"/);
+  assert.doesNotMatch(bookingForm, /name="firstName"/);
 });
 
 test("all application views render", async () => {

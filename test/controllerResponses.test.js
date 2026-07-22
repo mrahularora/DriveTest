@@ -157,6 +157,65 @@ test("driver validation errors render inside the correct form", async () => {
   assert.equal(res.locals.error, "Enter valid car details.");
 });
 
+test("profile updates save driver details without booking", async () => {
+  const originals = {
+    findById: UserAccount.findById,
+    exists: UserAccount.exists,
+    updateOne: UserAccount.updateOne,
+    appointmentExists: Appointment.exists,
+  };
+  let saved;
+  UserAccount.findById = async () => ({ _id: "driver" });
+  UserAccount.exists = async () => false;
+  UserAccount.updateOne = async (filter, update) => { saved = update.$set; };
+  Appointment.exists = assert.fail;
+  const res = response();
+  try {
+    await modifyDetail({
+      session: { userId: "driver" },
+      body: {
+        action: "profile",
+        firstName: "Test",
+        lastName: "Driver",
+        licenceNo: "AB12CD34",
+        age: "26",
+        dob: "2000-01-01",
+        make: "Honda",
+        model: "Civic",
+        year: "2020",
+        plateNo: "test123",
+      },
+    }, res, assert.fail);
+  } finally {
+    UserAccount.findById = originals.findById;
+    UserAccount.exists = originals.exists;
+    UserAccount.updateOne = originals.updateOne;
+    Appointment.exists = originals.appointmentExists;
+  }
+  assert.equal(saved.firstName, "Test");
+  assert.equal(saved.carDetails.plateNo, "TEST123");
+  assert.equal(saved.appointmentDate, undefined);
+  assert.equal(res.path, "/g2?profile=saved");
+});
+
+test("G2 booking requires a saved complete profile", async () => {
+  const originals = { findById: UserAccount.findById, appointmentExists: Appointment.exists };
+  UserAccount.findById = async () => ({ _id: "driver", carDetails: {} });
+  Appointment.exists = assert.fail;
+  const res = response();
+  try {
+    await modifyDetail({
+      session: { userId: "driver" },
+      body: { testType: "G2", G2date: "2999-01-01", timeSlot: "09:00" },
+    }, res, assert.fail);
+  } finally {
+    UserAccount.findById = originals.findById;
+    Appointment.exists = originals.appointmentExists;
+  }
+  assert.equal(res.statusCode, 403);
+  assert.equal(res.locals.error, "Save a complete profile before booking a G2 test.");
+});
+
 test("examiner validation errors stay on the assessment form", async () => {
   const findById = UserAccount.findById;
   UserAccount.findById = async () => ({ _id: "driver" });
