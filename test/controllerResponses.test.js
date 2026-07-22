@@ -234,7 +234,7 @@ test("examiner validation errors stay on the assessment form", async () => {
   assert.equal(res.locals.error, "Select pass or fail.");
 });
 
-test("booking and driver writes share one transaction", async () => {
+test("rescheduling and driver writes share one transaction", async () => {
   const originals = {
     startSession: mongoose.startSession,
     findById: UserAccount.findById,
@@ -250,7 +250,13 @@ test("booking and driver writes share one transaction", async () => {
   let bookingSession;
   let userSession;
   mongoose.startSession = async () => session;
-  UserAccount.findById = async () => ({ _id: "driver", qualified: "G2" });
+  UserAccount.findById = async () => ({
+    _id: "driver",
+    qualified: "G2",
+    status: "Pending",
+    testType: "G",
+    appointmentDate: "2999-01-02",
+  });
   UserAccount.updateOne = async (filter, update, options) => { userSession = options.session; };
   Appointment.exists = async () => true;
   BookedTimeSlot.exists = async () => false;
@@ -261,7 +267,7 @@ test("booking and driver writes share one transaction", async () => {
     await modifyDetail(
       {
         session: { userId: "driver" },
-        body: { testType: "G", Gdate: "2999-01-01", timeSlot: "09:00" },
+        body: { action: "reschedule", testType: "G", Gdate: "2999-01-01", timeSlot: "09:00" },
       },
       res,
       assert.fail
@@ -278,7 +284,52 @@ test("booking and driver writes share one transaction", async () => {
   assert.equal(bookingSession, session);
   assert.equal(userSession, session);
   assert.equal(session.ended, true);
-  assert.equal(res.path, "/g?booked=1");
+  assert.equal(res.path, "/g?rescheduled=1");
+});
+
+test("cancellation removes the booking and appointment together", async () => {
+  const originals = {
+    startSession: mongoose.startSession,
+    findById: UserAccount.findById,
+    userUpdate: UserAccount.updateOne,
+    bookingDelete: BookedTimeSlot.deleteOne,
+  };
+  const session = {
+    withTransaction: async (work) => work(),
+    endSession: async () => { session.ended = true; },
+  };
+  let bookingSession;
+  let userUpdate;
+  mongoose.startSession = async () => session;
+  UserAccount.findById = async () => ({
+    _id: "driver",
+    status: "Pending",
+    testType: "G2",
+    appointmentDate: "2999-01-01",
+  });
+  BookedTimeSlot.deleteOne = async (filter, options) => { bookingSession = options.session; };
+  UserAccount.updateOne = async (filter, update, options) => {
+    userUpdate = update;
+    assert.equal(options.session, session);
+  };
+  const res = response();
+
+  try {
+    await modifyDetail({
+      session: { userId: "driver" },
+      body: { action: "cancel", testType: "G2" },
+    }, res, assert.fail);
+  } finally {
+    mongoose.startSession = originals.startSession;
+    UserAccount.findById = originals.findById;
+    UserAccount.updateOne = originals.userUpdate;
+    BookedTimeSlot.deleteOne = originals.bookingDelete;
+  }
+
+  assert.equal(bookingSession, session);
+  assert.deepEqual(Object.keys(userUpdate.$unset).sort(), ["appointmentDate", "appointmentTime", "comment", "testType"]);
+  assert.equal(session.ended, true);
+  assert.equal(res.path, "/g2?canceled=1");
 });
 
 test("booking conflicts return status 409 before any write", async () => {

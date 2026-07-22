@@ -5,12 +5,14 @@ module.exports = async (req, res, next) => {
   try {
     const user = await UserAccount.findById(req.session.userId);
     if (!user) return res.redirect("/auth/logout");
+    const success = req.query.canceled === "1" ? "Your G2 appointment was cancelled."
+      : req.query.rescheduled === "1" ? "Your G2 appointment was rescheduled."
+      : req.query.booked === "1" ? "Your G2 appointment is confirmed."
+      : req.query.profile === "saved" ? "Profile saved." : "";
     res.render("g2test", {
       user,
       error: "",
-      success: req.query.booked === "1"
-        ? "Your G2 appointment is confirmed."
-        : req.query.profile === "saved" ? "Profile saved." : "",
+      success,
       journey: getDriverJourney(user, "G2"),
     });
   } catch (error) {

@@ -85,6 +85,23 @@ test("G2 profile and booking fields use separate forms", async () => {
   assert.match(bookingForm, /type="submit" disabled/);
 });
 
+test("pending appointments offer reschedule and cancellation controls", async () => {
+  const pendingUser = { ...user, appointmentDate: "2999-01-01", appointmentTime: "09:00" };
+  const html = await ejs.renderFile(path.join(__dirname, "..", "views", "g2test.ejs"), {
+    loggedIn: true,
+    userType: "driver",
+    currentPath: "/g2",
+    csrfToken: "test-token",
+    user: pendingUser,
+    error: "",
+    success: "",
+    journey: getDriverJourney(pendingUser, "G2"),
+  });
+  assert.match(html, /name="action" value="reschedule"/);
+  assert.match(html, /name="action" value="cancel"/);
+  assert.match(html, /Cancel appointment/);
+});
+
 test("all application views render", async () => {
   for (const [file, locals] of Object.entries(cases)) {
     const html = await ejs.renderFile(path.join(__dirname, "..", "views", file), {

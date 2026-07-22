@@ -79,6 +79,37 @@ module.exports = async (req, res, next) => {
     }
 
     const testType = req.body.testType;
+    const currentPending = user.status === "Pending" && user.appointmentDate;
+    if (req.body.action === "cancel") {
+      if (!["G2", "G"].includes(testType) || !currentPending || user.testType !== testType) {
+        return formError(res, user, testType, 409, "This appointment can no longer be cancelled.");
+      }
+      const session = await mongoose.startSession();
+      try {
+        await session.withTransaction(async () => {
+          await BookedTimeSlot.deleteOne({ userId: user._id, testType }, { session });
+          await UserAccount.updateOne(
+            { _id: user._id },
+            { $unset: { appointmentDate: "", appointmentTime: "", testType: "", comment: "" } },
+            { session }
+          );
+        });
+      } finally {
+        await session.endSession();
+      }
+      return res.redirect(testType === "G" ? "/g?canceled=1" : "/g2?canceled=1");
+    }
+
+    if (req.body.action && req.body.action !== "reschedule") {
+      return formError(res, user, testType, 400, "Invalid appointment action.");
+    }
+    if (req.body.action === "reschedule" && (!currentPending || user.testType !== testType)) {
+      return formError(res, user, testType, 409, "This appointment can no longer be rescheduled.");
+    }
+    if (!req.body.action && currentPending) {
+      return formError(res, user, testType, 409, "Cancel or reschedule your current appointment first.");
+    }
+
     const date = testType === "G" ? req.body.Gdate : req.body.G2date;
     const time = req.body.timeSlot;
 
@@ -124,7 +155,8 @@ module.exports = async (req, res, next) => {
     } finally {
       await session.endSession();
     }
-    res.redirect(testType === "G" ? "/g?booked=1" : "/g2?booked=1");
+    const result = req.body.action === "reschedule" ? "rescheduled" : "booked";
+    res.redirect(testType === "G" ? `/g?${result}=1` : `/g2?${result}=1`);
   } catch (error) {
     if (error.code === 11000 && user) {
       return formError(res, user, req.body.testType, 409, "That appointment or licence is already taken.");

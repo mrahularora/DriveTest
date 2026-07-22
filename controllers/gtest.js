@@ -5,10 +5,13 @@ module.exports = async (req, res, next) => {
   try {
     const user = await UserAccount.findById(req.session.userId);
     if (!user) return res.redirect("/auth/logout");
+    const success = req.query.canceled === "1" ? "Your G appointment was cancelled."
+      : req.query.rescheduled === "1" ? "Your G appointment was rescheduled."
+      : req.query.booked === "1" ? "Your G appointment is confirmed." : "";
     res.render("gtest", {
       user,
       error: "",
-      success: req.query.booked === "1" ? "Your G appointment is confirmed." : "",
+      success,
       journey: getDriverJourney(user, "G"),
     });
   } catch (error) {
