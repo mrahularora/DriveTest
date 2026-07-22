@@ -39,7 +39,9 @@
           <%= message %>
         </h5>
         <!-- Display a table with appointment details -->
+        <div class="table-responsive">
         <table class="table">
+          <caption class="visually-hidden">Driver appointments assigned to the examiner</caption>
           <thead>
             <tr>
               <th>Name</th>
@@ -82,6 +84,7 @@
               <% }); %>
           </tbody>
         </table>
+        </div>
       </div>
       <!-- Footer-->
       <%- include('layouts/footer') -%>

@@ -102,10 +102,31 @@
   font-weight: 700;
 }
 
+.btn-primary {
+  background-color: #00677a;
+  border-color: #00677a;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #004f5f;
+  border-color: #004f5f;
+}
+
 .form-control:focus,
 .form-select:focus {
   border-color: #007189;
   box-shadow: 0 0 0 0.2rem rgba(0, 113, 137, 0.2);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #f5b642;
+  outline-offset: 3px;
 }
 
 .alert {

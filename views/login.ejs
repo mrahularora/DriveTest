@@ -35,7 +35,7 @@
                       <form id="loginForm" action="/users/login" method="post">
                         <div class="form-floating">
                           <input class="form-control" id="username" name="userName" type="text" placeholder="Username"
-                            autocomplete="username" />
+                            autocomplete="username" required />
                           <label for="username">Username</label>
                           <div class="invalid-feedback">Please enter your username</div>
                           <div class="usernameError"></div>
@@ -43,7 +43,7 @@
 
                         <div class="form-floating">
                           <input class="form-control" id="password" name="password" type="password"
-                            placeholder="Password" />
+                            placeholder="Password" autocomplete="current-password" required />
                           <label for="password">Password</label>
                           <div class="invalid-feedback">Please enter your password</div>
                           <div class="passwordError"></div>
