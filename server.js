@@ -7,6 +7,7 @@ for (const name of ["MONGODB_URI", "SESSION_SECRET", "LICENSE_ENCRYPTION_KEY"]) 
 const express = require("express");
 const mongoose = require("mongoose");
 const expressSession = require("express-session");
+const { MongoStore } = require("connect-mongo");
 
 const app = express();
 app.set("view engine", "ejs");
@@ -16,6 +17,7 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(
   expressSession({
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,

@@ -145,11 +145,13 @@ Mongoose creates these collections as application data is saved:
 - `useraccounts`
 - `appointments`
 - `bookedtimeslots`
+- `sessions`
 
 ## Security
 
 - Passwords are salted and hashed with Node.js scrypt.
 - Licence numbers are encrypted with AES-256-GCM.
+- Sessions are stored in MongoDB so authenticated sessions survive server restarts.
 - Session cookies are HTTP-only and use `SameSite=Lax`.
 - Driver, examiner, and administrator routes use role-based middleware.
 - Public registration always creates a driver account; staff roles must be provisioned directly by a database administrator.
