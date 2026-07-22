@@ -36,7 +36,7 @@ const cases = {
     journey: getDriverJourney({ ...user, qualified: "G2" }, "G"),
   },
   "appointment.ejs": { error: "", message: "" },
-  "examiner.ejs": { appointments: [], error: "", message: "" },
+  "examiner.ejs": { appointments: [], error: "", message: "", filters: { testType: "all", status: "pending" } },
   "adminDriverView.ejs": { appointments: [], error: "", message: "" },
   "viewUserAppointment.ejs": { driverDetails: user, error: "" },
   "vendor.ejs": { allDetails: { ...user, qualified: "G2" }, error: "" },
@@ -143,6 +143,7 @@ test("staff appointment tables are searchable, sortable, and responsive", async 
       appointments: [],
       error: "",
       message: "",
+      filters: { testType: "all", status: "pending" },
     });
     assert.match(html, /class="table-responsive"/);
     assert.match(html, /type="search"[^>]+data-table-search=/);

@@ -21,15 +21,25 @@
       <!-- Filter Form -->
       <div class="container mt-3">
         <% if (error) { %><div class="alert alert-danger" role="alert"><%= error %></div><% } %>
-        <form action="/examiner" method="GET">
-          <label for="testType">Filter by Test Type:</label>
-          <select class="form-select mb-3" id="testType" name="testType">
-            <option value="all">All</option>
-            <option value="G2">G2 Test</option>
-            <option value="G">G Test</option>
-          </select>
-
+        <form action="/examiner" method="GET" class="row align-items-end g-3">
+          <div class="col-md-5">
+            <label class="form-label" for="testType">Test type</label>
+            <select class="form-select" id="testType" name="testType">
+              <option value="all" <%= filters.testType === 'all' ? 'selected' : '' %>>All test types</option>
+              <option value="G2" <%= filters.testType === 'G2' ? 'selected' : '' %>>G2 Test</option>
+              <option value="G" <%= filters.testType === 'G' ? 'selected' : '' %>>G Test</option>
+            </select>
+          </div>
+          <div class="col-md-5">
+            <label class="form-label" for="appointmentStatus">Queue</label>
+            <select class="form-select" id="appointmentStatus" name="status">
+              <option value="pending" <%= filters.status === 'pending' ? 'selected' : '' %>>Pending only</option>
+              <option value="all" <%= filters.status === 'all' ? 'selected' : '' %>>All appointments</option>
+            </select>
+          </div>
+          <div class="col-md-2">
           <button type="submit" class="btn btn-primary">Apply Filter</button>
+          </div>
         </form>
       </div>
 
@@ -56,6 +66,7 @@
               <th scope="col" aria-sort="none"><button type="button" class="btn btn-link p-0 fw-bold text-dark text-decoration-none" data-sort-column="3">Appointment time</button></th>
               <th scope="col" aria-sort="none"><button type="button" class="btn btn-link p-0 fw-bold text-dark text-decoration-none" data-sort-column="4">Test type</button></th>
               <th scope="col">Remarks</th>
+              <th scope="col" aria-sort="none"><button type="button" class="btn btn-link p-0 fw-bold text-dark text-decoration-none" data-sort-column="6">Status</button></th>
               <th scope="col">Action</th>
             </tr>
           </thead>
@@ -83,8 +94,14 @@
                   <%= appointment.userDetails.comment %>
                 </td>
                 <td>
-                  <a href="/examiner/appointments/<%= appointment.userDetails._id %>/<%= appointment.userDetails.testType %>"
-                    class="btn btn-primary">View Details</a>
+                  <span class="badge <%= appointment.userDetails.status === 'Pending' ? 'bg-info text-dark' : appointment.userDetails.status === 'Passed' ? 'bg-success' : 'bg-danger' %>"><%= appointment.userDetails.status %></span>
+                </td>
+                <td>
+                  <% if (appointment.userDetails.status === "Pending") { %>
+                    <a href="/examiner/appointments/<%= appointment.userDetails._id %>/<%= appointment.testType %>" class="btn btn-primary">View details</a>
+                  <% } else { %>
+                    <span class="text-muted" aria-label="No action available">&mdash;</span>
+                  <% } %>
                 </td>
               </tr>
               <% }); %>

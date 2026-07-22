@@ -7,6 +7,7 @@ const UserAccount = require("../models/UserAccount");
 const checkTimeSlot = require("../controllers/checkTimeSlot");
 const modifyDetail = require("../controllers/modifyDetail");
 const examineAppointment = require("../controllers/examinUserAppointment");
+const examinerQueue = require("../controllers/examinerController");
 const createAccount = require("../controllers/createNewAccount");
 const auth = require("../middleware/authMiddleware");
 const express = require("express");
@@ -289,6 +290,34 @@ test("examiner results cannot be submitted twice", async () => {
   assert.equal(res.statusCode, 409);
   assert.equal(res.view, "viewUserAppointment");
   assert.match(res.locals.error, /already been submitted/);
+});
+
+test("examiner queue defaults to pending appointments", async () => {
+  const originals = { bookingFind: BookedTimeSlot.find, userFind: UserAccount.find };
+  const booking = (userId) => ({
+    userId,
+    toObject: () => ({ userId, testType: "G2", date: "2999-01-01", time: "09:00" }),
+  });
+  BookedTimeSlot.find = async () => [booking("pending"), booking("passed")];
+  UserAccount.find = async () => [
+    { _id: "pending", status: "Pending" },
+    { _id: "passed", status: "Passed" },
+  ];
+
+  try {
+    const pending = response();
+    await examinerQueue({ query: {} }, pending);
+    assert.equal(pending.locals.appointments.length, 1);
+    assert.equal(pending.locals.appointments[0].userDetails.status, "Pending");
+    assert.deepEqual(pending.locals.filters, { testType: "all", status: "pending" });
+
+    const all = response();
+    await examinerQueue({ query: { status: "all" } }, all);
+    assert.equal(all.locals.appointments.length, 2);
+  } finally {
+    BookedTimeSlot.find = originals.bookingFind;
+    UserAccount.find = originals.userFind;
+  }
 });
 
 test("rescheduling and driver writes share one transaction", async () => {
