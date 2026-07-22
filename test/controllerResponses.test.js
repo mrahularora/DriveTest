@@ -7,6 +7,7 @@ const UserAccount = require("../models/UserAccount");
 const checkTimeSlot = require("../controllers/checkTimeSlot");
 const modifyDetail = require("../controllers/modifyDetail");
 const examineAppointment = require("../controllers/examinUserAppointment");
+const auth = require("../middleware/authMiddleware");
 
 const response = () => ({
   statusCode: 200,
@@ -21,6 +22,30 @@ const response = () => ({
     this.view = view;
     this.locals = locals;
   },
+  redirect(path) {
+    this.path = path;
+  },
+});
+
+test("authentication and role authorization protect staff routes", async () => {
+  const guest = response();
+  await auth.adminMiddleware({ session: {} }, guest, assert.fail);
+  assert.equal(guest.path, "/login");
+
+  const findById = UserAccount.findById;
+  try {
+    UserAccount.findById = () => ({ select: async () => ({ userType: "driver" }) });
+    const forbidden = response();
+    await auth.adminMiddleware({ session: { userId: "driver" } }, forbidden, assert.fail);
+    assert.equal(forbidden.path, "/");
+
+    UserAccount.findById = () => ({ select: async () => ({ userType: "admin" }) });
+    let allowed = false;
+    await auth.adminMiddleware({ session: { userId: "admin" } }, response(), () => { allowed = true; });
+    assert.equal(allowed, true);
+  } finally {
+    UserAccount.findById = findById;
+  }
 });
 
 test("availability database errors return JSON with status 500", async () => {
@@ -117,4 +142,39 @@ test("booking and driver writes share one transaction", async () => {
   assert.equal(userSession, session);
   assert.equal(session.ended, true);
   assert.equal(res.path, "/g");
+});
+
+test("booking conflicts return status 409 before any write", async () => {
+  const originals = {
+    findById: UserAccount.findById,
+    appointmentExists: Appointment.exists,
+    bookingExists: BookedTimeSlot.exists,
+    bookingUpdate: BookedTimeSlot.updateOne,
+  };
+  let wroteBooking = false;
+  UserAccount.findById = async () => ({ _id: "driver", qualified: "G2" });
+  Appointment.exists = async () => true;
+  BookedTimeSlot.exists = async () => true;
+  BookedTimeSlot.updateOne = async () => { wroteBooking = true; };
+  const res = response();
+
+  try {
+    await modifyDetail(
+      {
+        session: { userId: "driver" },
+        body: { testType: "G", Gdate: "2999-01-01", timeSlot: "09:00" },
+      },
+      res,
+      assert.fail
+    );
+  } finally {
+    UserAccount.findById = originals.findById;
+    Appointment.exists = originals.appointmentExists;
+    BookedTimeSlot.exists = originals.bookingExists;
+    BookedTimeSlot.updateOne = originals.bookingUpdate;
+  }
+
+  assert.equal(res.statusCode, 409);
+  assert.equal(res.view, "gtest");
+  assert.equal(wroteBooking, false);
 });
