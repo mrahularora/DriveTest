@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('layouts/head'); -%>
+
+  <head>
+    <title>G</title>
+  </head>
+
+  <body>
+    <!-- Navigation-->
+    <%- include('layouts/navbar'); -%>
+      <!-- Page Header-->
+      <!-- Page Header-->
+      <header class="masthead">
+        <div class="container position-relative px-4 px-lg-5">
+          <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+              <div class="site-heading">
+                <h1>G Test</h1>
+                <span class="subheading">Book your G Test</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="mb-4">
+        <div class="container px-4 px-lg-5">
+          <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+              <div class="my-2">
+                <h2>Driver Information</h2>
+                <div id="user-info">
+                  <p>
+                    First Name : <span id="firstname">
+                      <%= user.firstName %>
+                    </span><br />
+                    Last Name : <span id="lastname">
+                      <%= user.lastName %>
+                    </span><br />
+                    Age : <span id="age">
+                      <%= user.age %>
+                    </span><br />
+                    License Number :<span id="licenseNumber">
+                      <%= user.licenceNo %>
+                    </span></p><br />
+                  <h2><b>Car Information</b></h2>
+                  <p>
+                    Make: <span id="make">
+                      <%= user.carDetails.make %>
+                    </span><br />
+                    Model: <span id="model">
+                      <%= user.carDetails.model %>
+                    </span><br />
+                    Year: <span id="year">
+                      <%= user.carDetails.year %>
+                    </span><br />
+                    Plate Number: <span id="plateno">
+                      <%= user.carDetails.plateNo %>
+                    </span><br />
+                  </p>
+                  <details class="mb-4">
+                    <summary class="btn btn-outline-primary">Update Car Information</summary>
+                    <form action="/edit" method="POST" class="mt-3">
+                      <input type="hidden" name="action" value="car" />
+                      <div class="form-floating">
+                        <input class="form-control" id="carMake" name="make" value="<%- user.carDetails.make %>" required />
+                        <label for="carMake">Make</label>
+                      </div>
+                      <div class="form-floating">
+                        <input class="form-control" id="carModel" name="model" value="<%- user.carDetails.model %>" required />
+                        <label for="carModel">Model</label>
+                      </div>
+                      <div class="form-floating">
+                        <input class="form-control" id="carYear" name="year" type="number" min="1900"
+                          value="<%- user.carDetails.year %>" required />
+                        <label for="carYear">Year</label>
+                      </div>
+                      <div class="form-floating">
+                        <input class="form-control" id="carPlate" name="plateNo" value="<%- user.carDetails.plateNo %>" required />
+                        <label for="carPlate">Plate Number</label>
+                      </div>
+                      <button class="btn btn-primary mt-3" type="submit">Save Car Information</button>
+                    </form>
+                  </details>
+                  <% if (user.testType==="G" && user.appointmentDate) { %>
+                    <br />
+                    <h2>G Appointment Details</h2>
+
+                    <p>Appointment Date: <%= user.appointmentDate %>
+                    </p>
+                    <p>Appointment Time: <%= user.appointmentTime %>
+                    </p>
+                    <% if (user.comment) { %>
+                      <p>Examiner Comment: <b>
+                          <%= user.comment %>
+                        </b></p>
+                      <% } %>
+                        <% } %>
+                          <% if (user.status==="Pending" && user.appointmentDate && user.testType==="G" ) { %>
+                            <% if (user.qualified==="G" ) { %>
+                              <h5>
+                                Thank you for appearing for G Test. Your result is pending.
+                              </h5>
+                              <% } else { %>
+
+                                <h5>Your time slot has been booked</h5>
+
+                                <% } %>
+                                  <% } else if (user.pass===true && user.testType==="G" ) { %>
+
+                                    <h5 style="color: green">Congratulations! Your have Passed the G Test Successfully.
+                                    </h5>
+                                    <p style="
+                      font-style: italic;
+                      font-size: 16px;
+                      color: darkcyan; ">
+                                      After confirmation, your driving license will be delivered to your address
+                                    </p>
+                                    <% } else { %>
+                                      <% if (user.qualified==="G2" && user.status !=="Pending" ) { %>
+                                        <h5 style="color:green;">Congratulations! Your have Passed the G2 Test
+                                          Successfully. You can book G Test Now.</h5>
+                                        <form action="/edit" method="POST">
+                                          <input type="hidden" name="testType" value="G" />
+                                          <div class="form-floating">
+                                            <input type="date" name="Gdate" class="form-control"
+                                              id="bookingAppointmentDate" value="<%- user.appointmentDate %>"
+                                              onchange="getTimeSlot('<%- user._id %>')" />
+                                            <label for="bookingAppointmentDate">Select G Appointment Date:</label>
+                                          </div>
+                                          <h5 id="headerTimeSlot"></h5>
+                                          <div class="mt-3" id="timeSlotsSection" style="display: none">
+                                            <h5>Select Time Slots:</h5>
+                                            <div class="form-check form-check-inline" id="selectSlots"></div>
+                                          </div>
+                                          <br />
+                                          <button class="btn btn-primary text-uppercase" id="submitButton"
+                                            type="submit">
+                                            Book Appointment
+                                          </button>
+                                        </form>
+                                        <% } else if (user.qualified==="G" && user.status ==="Failed") { %>
+                                          <h5 style="color: red">
+                                            You have not qualified the test, please book again
+                                          </h5>
+                                          <form action="/edit" method="POST">
+                                            <input type="hidden" name="testType" value="G" />
+                                            <div class="form-floating">
+                                              <input type="date" name="Gdate" class="form-control"
+                                                id="bookingAppointmentDate" value="<%- user.appointmentDate %>"
+                                                onchange="getTimeSlot('<%- user._id %>')" />
+                                              <label for="bookingAppointmentDate">Select G Appointment Date:</label>
+                                            </div>
+                                            <h5 id="headerTimeSlot"></h5>
+                                            <div class="mt-3" id="timeSlotsSection" style="display: none">
+                                              <h5>Select Time Slots:</h5>
+                                              <div class="form-check form-check-inline" id="selectSlots"></div>
+                                            </div>
+                                            <br />
+                                            <button class="btn btn-primary text-uppercase" id="submitButton"
+                                              type="submit">
+                                              Book Appointment
+                                            </button>
+                                          </form>
+                                          <% } else { %>
+                                          <h5 style="color: red">
+                                            You need to qualify G2 Test in order to take the G Test
+                                          </h5>
+                                            <% } %>
+                                            <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <!-- Footer-->
+      <%- include('layouts/footer') -%>
+        <!-- JS-->
+        <%- include('layouts/scripts') -%>
+          <script>
+            $(function () {
+              var dtToday = new Date();
+              console.log("date");
+              var month = dtToday.getMonth() + 1;
+              var day = dtToday.getDate();
+              var year = dtToday.getFullYear();
+              if (month < 10) month = "0" + month.toString();
+              if (day < 10) day = "0" + day.toString();
+              var maxDate = year + "-" + month + "-" + day;
+              $("#bookingAppointmentDate").attr("min", maxDate);
+            });
+          </script>
+  </body>
+
+</html>

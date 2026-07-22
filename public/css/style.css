@@ -1,0 +1,111 @@
+.modifiedMasthead {
+  position: relative;
+  margin-bottom: 3rem;
+  padding-top: calc(8rem + 57px);
+  padding-bottom: 8rem;
+  background: no-repeat center center;
+  background-color: #6c757d;
+  background-size: cover;
+  background-attachment: scroll;
+}
+.modifiedMasthead:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #212529;
+  opacity: 0.5;
+}
+.modifiedMasthead .page-heading,
+.modifiedMasthead .post-heading,
+.modifiedMasthead .site-heading {
+  color: #fff;
+}
+.modifiedMasthead .page-heading,
+.modifiedMasthead .site-heading {
+  text-align: center;
+}
+.modifiedMasthead .page-heading h1,
+.modifiedMasthead .page-heading .h1,
+.modifiedMasthead .site-heading h1,
+.modifiedMasthead.site-heading .h1 {
+  font-size: 3rem;
+}
+.modifiedMasthead .page-heading .subheading,
+.modifiedMasthead.site-heading .subheading {
+  font-size: 1.5rem;
+  font-weight: 300;
+  line-height: 1.1;
+  display: block;
+  margin-top: 0.625rem;
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+.modifiedMasthead .post-heading h1,
+.modifiedMasthead .post-heading .h1 {
+  font-size: 2.25rem;
+}
+.modifiedMasthead .post-heading .meta,
+.modifiedMasthead .post-heading .subheading {
+  line-height: 1.1;
+  display: block;
+}
+.modifiedMasthead .post-heading .subheading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0.75rem 0 2rem;
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+.modifiedMasthead .post-heading .meta {
+  font-size: 1.25rem;
+  font-weight: 300;
+  font-style: italic;
+  font-family: "Lora", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+}
+.modifiedMasthead .post-heading .meta a {
+  color: #fff;
+}
+.firstNameError
+  .lastNameError
+  .phoneError
+  .usernameError
+  .passwordError
+  .confirmPasswordError {
+  color: red;
+}
+.form-group {
+  margin-bottom: 1.5rem; /* Adjust as needed for spacing between fields */
+}
+
+.form-select {
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+}
+@media (min-width: 992px) {
+  .modifiedMasthead {
+    padding-top: 12.5rem;
+    padding-bottom: 12.5rem;
+  }
+  .modifiedMasthead .page-heading h1,
+  .modifiedMasthead.page-heading .h1,
+  .modifiedMasthead .site-heading h1,
+  .modifiedMasthead .site-heading .h1 {
+    font-size: 5rem;
+  }
+  .modifiedMasthead .post-heading h1,
+  .modifiedMasthead .post-heading .h1 {
+    font-size: 3.5rem;
+  }
+  .modifiedMasthead .post-heading .subheading {
+    font-size: 1.875rem;
+  }
+}

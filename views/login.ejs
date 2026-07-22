@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('layouts/head'); -%>
+
+  <head>
+    <title>Login</title>
+  </head>
+
+  <body>
+    <!-- Navigation-->
+    <%- include('layouts/navbar'); -%>
+      <!-- Page Header-->
+      <header class="masthead">
+        <div class="container position-relative px-4 px-lg-5">
+          <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+              <div class="page-heading">
+                <h1>Login</h1>
+                <span class="subheading">DriveTest Booking Kiosk</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <!-- Main Content-->
+      <main class="mb-4">
+        <div class="container px-4 px-lg-5">
+          <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-5">
+              <% if (typeof error !=='undefined' && error.length> 1){ %>
+                <p style="
+                color: red;
+                font-weight: bold;
+                text-align: center;
+                font-size: 25px;
+              ">
+                  <%= error %>
+                </p>
+                <% }else if(typeof success !=='undefined' && success.length> 1){
+                  %>
+                  <p style="
+                color: rgb(0, 188, 19);
+                font-weight: bold;
+                text-align: center;
+                font-size: 25px;
+              ">
+                    <%= success %>
+                  </p>
+                  <% } %>
+
+                    <div class="my-3">
+                      <h2 class="card-title text-center mb-4">Login</h2>
+                      <form id="loginForm" action="/users/login" method="post">
+                        <div class="form-floating">
+                          <input class="form-control" id="username" name="userName" type="text" placeholder="Username"
+                            autocomplete="username" />
+                          <label for="username">Username</label>
+                          <div class="invalid-feedback">Please enter your username</div>
+                          <div class="usernameError"></div>
+                        </div>
+
+                        <div class="form-floating">
+                          <input class="form-control" id="password" name="password" type="password"
+                            placeholder="Password" />
+                          <label for="password">Password</label>
+                          <div class="invalid-feedback">Please enter your password</div>
+                          <div class="passwordError"></div>
+                        </div>
+                        <br />
+
+                        <button class="btn btn-primary text-uppercase" id="submitButton" type="submit">
+                          Login
+                        </button>
+                        <span class="c-account">
+                          <a href="/signup">Register Now</a>
+                        </span>
+                      </form>
+                    </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <!-- Footer-->
+      <%- include('layouts/footer') -%>
+        <!-- JS-->
+        <%- include('./layouts/scripts') -%>
+  </body>
+
+</html>

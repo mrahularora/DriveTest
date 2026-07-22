@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('layouts/head'); -%>
+
+  <head>
+    <title>Examiner</title>
+  </head>
+
+  <body>
+    <!-- Navigation-->
+    <%- include('layouts/navbar'); -%>
+      <!-- Page Header-->
+      <header class="masthead">
+        <div class="container position-relative px-4 px-lg-5">
+          <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+              <div class="page-heading">
+                <h1>Examiner</h1>
+                <span class="subheading">DriveTest Booking Kiosk</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <!-- Filter Form -->
+      <div class="container mt-3">
+        <form action="/examiner" method="GET">
+          <label for="testType">Filter by Test Type:</label>
+          <select id="testType" name="testType">
+            <option value="all">All</option>
+            <option value="G2">G2 Test</option>
+            <option value="G">G Test</option>
+          </select>
+
+          <button type="submit" class="btn btn-primary">Apply Filter</button>
+        </form>
+      </div>
+
+      <div class="container mt-5">
+        <h2>Appointment List</h2>
+        <h5>
+          <%= message %>
+        </h5>
+        <!-- Display a table with appointment details -->
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Car Details</th>
+              <th>Appointment Date</th>
+              <th>Appointment Time</th>
+              <th>Test Type</th>
+              <th>Remarks</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% appointments.forEach(function(appointment) { %>
+              <tr>
+                <td>
+                  <%= appointment.userDetails.firstName %>
+                    <%= appointment.userDetails.lastName %>
+                </td>
+                <td>
+                  <%= appointment.userDetails.carDetails.make %>
+                    <%= appointment.userDetails.carDetails.model %>
+                </td>
+                <td>
+                  <%= appointment.userDetails.appointmentDate %>
+                </td>
+                <td>
+                  <%= appointment.userDetails.appointmentTime %>
+                </td>
+                <td>
+                  <%= appointment.testType %>
+                </td>
+                <td>
+                  <%= appointment.userDetails.comment %>
+                </td>
+                <td>
+                  <a href="/examiner/appointments/<%= appointment.userDetails._id %>/<%= appointment.userDetails.testType %>"
+                    class="btn btn-primary">View Details</a>
+                </td>
+              </tr>
+              <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <!-- Footer-->
+      <%- include('layouts/footer') -%>
+        <!-- JS-->
+        <%- include('layouts/scripts') -%>
+  </body>
+
+</html>

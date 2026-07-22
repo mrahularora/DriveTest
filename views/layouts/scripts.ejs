@@ -1,0 +1,291 @@
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    window.addEventListener("DOMContentLoaded", () => {
+      let scrollPos = 0;
+      const mainNav = document.getElementById("mainNav");
+      const headerHeight = mainNav.clientHeight;
+      window.addEventListener("scroll", function () {
+        const currentTop = document.body.getBoundingClientRect().top * -1;
+        if (currentTop < scrollPos) {
+          // Scrolling Up
+          if (currentTop > 0 && mainNav.classList.contains("is-fixed")) {
+            mainNav.classList.add("is-visible");
+          } else {
+            mainNav.classList.remove("is-visible", "is-fixed");
+          }
+        } else {
+          // Scrolling Down
+          mainNav.classList.remove("is-visible");
+          if (
+            currentTop > headerHeight &&
+            !mainNav.classList.contains("is-fixed")
+          ) {
+            mainNav.classList.add("is-fixed");
+          }
+        }
+        scrollPos = currentTop;
+      });
+
+      const userInfo = document.getElementById("user-info");
+      const editButton = document.getElementById("edit-button");
+      const editForm = document.getElementById("edit-form");
+
+      if (editButton) {
+        editButton.addEventListener("click", () => {
+          if (userInfo && editForm) {
+            if (userInfo.style.display === "none") {
+              // Switch to view mode
+              userInfo.style.display = "block";
+              editForm.style.display = "none";
+              editButton.innerText = "Edit";
+            } else {
+              // Switch to edit mode
+              userInfo.style.display = "none";
+              editForm.style.display = "block";
+              editButton.innerText = "Cancel Edit";
+            }
+          }
+        });
+      }
+    });
+  });
+</script>
+
+<!-- Signup form -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const registrationForm = document.getElementById("registrationForm");
+    if (registrationForm) {
+      registrationForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const userTypeInput = document.getElementById("userType");
+        const usernameInput = document.getElementById("username");
+        const passwordInput = document.getElementById("password");
+        const confirmPasswordInput = document.getElementById("confirmPassword");
+
+        const userTypeError = document.querySelector(".userTypeError");
+        const usernameError = document.querySelector(".usernameError");
+        const passwordError = document.querySelector(".passwordError");
+        const confirmPasswordError = document.querySelector(
+          ".confirmPasswordError"
+        );
+
+        userTypeError.textContent = "";
+        usernameError.textContent = "";
+        passwordError.textContent = "";
+        confirmPasswordError.textContent = "";
+
+        if (!userTypeInput.value.trim()) {
+          userTypeError.textContent = "User type is required.";
+          return;
+        }
+
+        if (!usernameInput.value.trim()) {
+          usernameError.textContent = "An username or email is required.";
+          return;
+        }
+
+        if (!passwordInput.value.trim()) {
+          passwordError.textContent = "A password is required.";
+          return;
+        }
+
+        if (!confirmPasswordInput.value.trim()) {
+          confirmPasswordError.textContent = "A password is required.";
+          return;
+        }
+
+        registrationForm.submit();
+      });
+    }
+  });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function (event) {
+    const loginForm = document.getElementById("loginForm");
+    if (loginForm) {
+      loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const loginInput = document.getElementById("username");
+        const passwordInput = document.getElementById("password");
+
+        const usernameError = document.querySelector(".usernameError");
+        const passwordError = document.querySelector(".passwordError");
+
+        usernameError.textContent = "";
+        passwordError.textContent = "";
+
+        if (!loginInput.value.trim()) {
+          usernameError.textContent = "An username or email is required.";
+          return;
+        }
+
+        if (!passwordInput.value.trim()) {
+          passwordError.textContent = "A password is required.";
+          return;
+        }
+        loginForm.submit();
+      });
+    }
+  });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const appointmentDate = document.getElementById("appointmentDate");
+    if (!appointmentDate) return;
+    appointmentDate.valueAsDate = new Date();
+
+    async function updateTimeSlotAvailability() {
+      try {
+        document.querySelectorAll(".form-check-input").forEach((checkbox) => {
+          checkbox.disabled = false;
+        });
+
+        const selectedDate = document.getElementById("appointmentDate").value;
+        const response = await fetch(`checkAppointment/${selectedDate}`);
+
+        if (response.ok) {
+          const existingAppointments = await response.json();
+          const times = existingAppointments.time;
+
+          if (times) {
+            times.forEach((appointment) => {
+              const time = appointment;
+              const checkbox = document.getElementById(time);
+
+              if (checkbox) {
+                checkbox.disabled = true;
+              }
+            });
+          }
+        } else {
+          console.error(`Error fetching appointments: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    }
+
+    updateTimeSlotAvailability();
+    appointmentDate.addEventListener("change", updateTimeSlotAvailability);
+  });
+</script>
+<script>
+  async function getTimeSlot(sessionId) {
+    const form = document.querySelector("form");
+    const selectSlotList = document.getElementById("selectSlots");
+    const timeSlotsSection = document.getElementById("timeSlotsSection");
+    const headerTime = document.getElementById("headerTimeSlot");
+
+    const selectedDate = document.getElementById(
+      "bookingAppointmentDate"
+    ).value;
+
+    try {
+      const response = await fetch(`checkAppointment/${selectedDate}`);
+
+      if (!response.ok) {
+        timeSlotsSection.style.display = "none";
+        headerTime.innerHTML = "No Time Slot Available";
+        return;
+      }
+
+      const selectSlots = await response.json();
+
+      const responseTimeSlotBooked = await fetch(
+        `checkTimeSlotAvailable/${selectedDate}`
+      );
+      if (!responseTimeSlotBooked.ok) {
+        throw new Error(
+          `Error fetching time slots. Status: ${responseTimeSlotBooked.status}`
+        );
+      }
+
+      const timeSlotBooked = await responseTimeSlotBooked.json();
+
+      const jsonSlot = selectSlots.time;
+      let result = [];
+
+      for (let i in jsonSlot) {
+        result.push(jsonSlot[i]);
+      }
+
+      // Display selected slots
+      selectSlotList.innerHTML = "";
+
+      result.forEach((slot) => {
+        const taskDiv = document.createElement("div");
+        const radioInput = document.createElement("input");
+        headerTime.innerHTML = "";
+        radioInput.type = "radio";
+        radioInput.name = "timeSlot";
+        radioInput.id = slot;
+        radioInput.value = slot;
+        const label = document.createElement("label");
+        label.htmlFor = slot;
+        label.textContent = slot;
+
+        for (let i in timeSlotBooked) {
+          if (timeSlotBooked.length != 0 && timeSlotBooked[i].time === slot) {
+            if (timeSlotBooked[i].userId == sessionId) {
+              radioInput.checked = true;
+              break;
+            }
+            radioInput.disabled = true; // Disable the radio button if the time slot is booked
+          }
+        }
+
+        taskDiv.appendChild(radioInput);
+        taskDiv.appendChild(label);
+
+        selectSlotList.appendChild(taskDiv);
+      });
+
+      if (result.length > 0) {
+        timeSlotsSection.style.display = "block";
+      } else {
+        timeSlotsSection.style.display = "none";
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form");
+        if (form) {
+          form.addEventListener("change", function (event) {
+            if (event.target.type === "radio" && event.target.checked) {
+              const selectedRadio = event.target;
+              const radioButtons = form.querySelectorAll('input[type="radio"]');
+
+              radioButtons.forEach((radio) => {
+                if (radio !== selectedRadio) {
+                  radio.checked = false;
+                }
+              });
+            }
+          });
+        }
+      });
+    } catch (err) {
+      console.error("Internal Error:", err.message);
+    }
+  }
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    function getTodayDate() {
+
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+  });
+</script>

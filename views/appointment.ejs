@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('layouts/head'); -%>
+  <head>
+    <title>Appointment</title>
+  </head>
+
+  <body>
+    <!-- Navigation-->
+    <%- include('layouts/navbar'); -%>
+
+    <!-- Page Header-->
+    <header class="masthead">
+      <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+          <div class="col-md-10 col-lg-8 col-xl-7">
+            <div class="page-heading">
+              <h1>Appointment</h1>
+              <span class="subheading">DriveTest Booking Kiosk</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="container mt-5">
+      <h2>Add Appointment Availability</h2>
+      <% if (typeof error !== 'undefined' && error.length > 1){ %>
+      <p
+        style="
+          color: red;
+          font-weight: bold;
+          text-align: center;
+          font-size: 25px;
+        "
+      >
+        <%= error %>
+      </p>
+      <% }else{ %>
+      <p>Select appointment slots for a specific date</p>
+      <% } %>
+      <% if (typeof message !== 'undefined' && message) { %>
+        <p class="text-success fw-bold text-center"><%= message %></p>
+      <% } %>
+
+      <!-- Date Input -->
+      <form action="/admin/appointments/" method="post">
+        <div class="form-group">
+          <label for="appointmentDate">Select Date:</label>
+          <input
+            type="date"
+            name="date"
+            class="form-control"
+            id="appointmentDate"
+            onchange="updateTimeSlotAvailability()"
+            required
+          />
+        </div>
+        <br />
+        <!-- Time Slots Grid -->
+        <div name="time" class="form-check form-check-inline">
+          <input
+            name="time"
+            id="09:00"
+            class="form-check-input"
+            type="checkbox"
+            value="09:00"
+          />
+          <label class="form-check-label" for="09:00am">09:00 am</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            name="time"
+            value="09:30"
+            id="09:30"
+            class="form-check-input"
+            type="checkbox"
+          />
+          <label class="form-check-label" for="09:30am">09:30 am</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="time"
+            value="10:00"
+            id="10:00"
+          />
+          <label class="form-check-label" for="10:00am">10:00 am</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="time"
+            value="10:30"
+            id="10:30"
+          />
+          <label class="form-check-label" for="10:30am">10:30 am</label>
+        </div>
+
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="time"
+            value="11:00"
+            id="11:00"
+          />
+          <label class="form-check-label" for="11:00am">11:00 am</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="time"
+            value="11:30"
+            id="11:30"
+          />
+          <label class="form-check-label" for="11:30am">11:30 am</label>
+        </div>
+
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="time"
+            value="12:00"
+            id="12:00"
+          />
+          <label class="form-check-label" for="12:00pm">12:00 pm</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="time"
+            value="12:30"
+            id="12:30"
+          />
+          <label class="form-check-label" for="12:00pm">12:30 pm</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="time"
+            value="13:00"
+            id="13:00"
+          />
+          <label class="form-check-label" for="01:00pm">01:00 pm</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="time"
+            value="13:30"
+            id="13:30"
+          />
+          <label class="form-check-label" for="01:30pm">01:30 pm</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="time"
+            value="14:00"
+            id="14:00"
+          />
+          <label class="form-check-label" for="14:00pm">02:00 pm</label>
+        </div>
+        <div class="form-group mt-3">
+          <button class="btn btn-primary" id="submitButton" type="submit">
+            Add Appointment
+          </button>
+        </div>
+      </form>
+    </div>
+    <%- include('layouts/footer') -%>
+    <!-- JS-->
+    <%- include('layouts/scripts') -%>
+  </body>
+</html>

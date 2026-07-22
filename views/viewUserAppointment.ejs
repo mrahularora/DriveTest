@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('layouts/head'); -%>
+
+  <head>
+    <title>Examiner - Driver Details</title>
+  </head>
+
+  <body>
+    <!-- Navigation-->
+    <%- include('layouts/navbar'); -%>
+      <!-- Page Header-->
+      <header class="masthead">
+        <div class="container position-relative px-4 px-lg-5">
+          <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+              <div class="page-heading">
+                <h1>Driver Details</h1>
+                <span class="subheading">DriveTest Booking Kiosk</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Driver Information</h5>
+          <p class="card-text">
+            <strong>Name:</strong>
+            <%= driverDetails.firstName %>
+              <%= driverDetails.lastName %>
+          </p>
+          <p class="card-text">
+            <strong>Licence Number:</strong>
+            <%= driverDetails.licenceNo %>
+          </p>
+          <p class="card-text">
+            <strong>Car Details:</strong>
+            <%= driverDetails.carDetails.make %>
+              <%= driverDetails.carDetails.model %>
+          </p>
+          <p class="card-text">
+            <strong>Plate Number:</strong>
+            <%= driverDetails.carDetails.plateNo %>
+          </p>
+        </div>
+      </div>
+
+      <div class="card mt-3">
+        <div class="card-body">
+          <h5 class="card-title">Examiner's Comments</h5>
+
+          <form action="/examiner/appointments/<%= driverDetails._id %>/<%= driverDetails.testType %>" method="post">
+            <div class="mb-3">
+              <label for="comment">Add Comment:</label>
+                <textarea class="form-control" id="comment" name="comment" rows="3">
+<%- driverDetails.comment %></textarea>
+            </div>
+
+            <fieldset class="mb-3">
+              <legend class="fs-6">Result</legend>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" id="resultPass" name="result" value="pass" required />
+                <label class="form-check-label" for="resultPass">Pass</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" id="resultFail" name="result" value="fail" required />
+                <label class="form-check-label" for="resultFail">Fail</label>
+              </div>
+            </fieldset>
+
+
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div><br />
+      <!-- Footer-->
+      <%- include('layouts/footer') -%>
+        <!-- JS-->
+        <%- include('./layouts/scripts') -%>
+  </body>
+
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('layouts/head'); -%>
+        <title>Drivers Status</title>
+</head>
+
+<body>
+    <!-- Navigation-->
+    <%- include('layouts/navbar'); -%>
+        <!-- Page Header-->
+        <header class="masthead">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="page-heading">
+                            <h1>Driver Status</h1>
+                            <span class="subheading">DriveTest Booking Kiosk</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container mt-5">
+            <h2>Driver Status List</h2>
+            <h5>
+                <%= message %>
+            </h5>
+            <!-- Display a table with appointment details -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Car Details</th>
+                        <th>Appointment Date</th>
+                        <th>Appointment Time</th>
+                        <th>Test Type</th>
+                        <th>Remarks</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% appointments.forEach(function(appointment) { %>
+                        <tr>
+                            <td>
+                                <%= appointment.userDetails.firstName %>
+                                    <%= appointment.userDetails.lastName %>
+                            </td>
+                            <td>
+                                <%= appointment.userDetails.carDetails.make %>
+                                    <%= appointment.userDetails.carDetails.model %>
+                            </td>
+                            <td>
+                                <%= appointment.userDetails.appointmentDate %>
+                            </td>
+                            <td>
+                                <%= appointment.userDetails.appointmentTime %>
+                            </td>
+                            <td>
+                                <%= appointment.testType %>
+                            </td>
+                            <td>
+                                <%= appointment.userDetails.comment %>
+                            </td>
+                            <% if(appointment.userDetails.status=='Pending' ) { %>
+                                <td style="color: steelblue; font-weight: bold">Pending</td>
+                                <% } else if(appointment.userDetails.pass===true){ %>
+                                    <td style="color: green; font-weight: bold">Pass</td>
+                                    <td>
+                                        <a href="/admin/vendor/<%= appointment.userDetails._id %>/<%= appointment.userDetails.testType %>"
+                                            class="btn btn-primary">Issue Physical License</a>
+                                    </td>
+                                    <% } else if(appointment.userDetails.pass===false){ %>
+                                        <td style="color: red; font-weight: bold">Failed</td>
+                                        <% } else if(appointment.userDetails.status=='Pending' ) { %>
+                                            <td style="color: steelblue; font-weight: bold">Pending</td>
+                                            <% } %>
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <!-- Footer-->
+        <%- include('layouts/footer') -%>
+        <!-- JS-->
+        <%- include('layouts/scripts') -%>
+</body>
+
+</html>

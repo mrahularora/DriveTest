@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('layouts/head'); -%>
+
+  <head>
+    <title>Signup</title>
+  </head>
+
+  <body>
+    <!-- Navigation-->
+    <%- include('layouts/navbar'); -%>
+      <!-- Page Header-->
+      <header class="masthead">
+        <div class="container position-relative px-4 px-lg-5">
+          <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+              <div class="page-heading">
+                <h1>Signup</h1>
+                <span class="subheading">DriveTest Booking Kiosk</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <!-- Main Content-->
+      <main class="mb-4">
+        <div class="container px-4 px-lg-5">
+          <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-6">
+              <% if (typeof error !=='undefined' && error.length> 1){ %>
+                <p style="
+                color: red;
+                font-weight: bold;
+                text-align: center;
+                font-size: 25px;
+              ">
+                  <%= error %>
+                </p>
+                <% }else{ %>
+                  <h2>Create An Account</h2>
+                  <% } %>
+
+                    <div class="my-4">
+                      <form id="registrationForm" method="post" action="/users/register">
+                        <div class="form-floating">
+                          <input class="form-control" id="username" name="userName" type="text" placeholder="Username"
+                            autocomplete="username" required />
+                          <label for="username">Username</label>
+                          <div class="usernameError"></div>
+                        </div>
+                        <div class="form-floating">
+                          <input class="form-control" id="password" name="password" type="password"
+                            placeholder="Enter your password" required />
+                          <label for="Password">Password</label>
+                          <div class="passwordError"></div>
+                        </div>
+                        <div class="form-floating">
+                          <input class="form-control" id="confirmPassword" name="confirmPassword" type="password"
+                            placeholder="Confirm your password" required />
+                          <label for="confirmPassword">Confirm Password</label>
+                          <div class="confirmPasswordError"></div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                          <label for="userType">User Type</label>
+                          <select class="form-select" id="userType" name="userType" style="border-radius: 5px">
+                            <option value="driver">Driver</option>
+                            <option value="examiner">Examiner</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                          <div class="userTypeError"></div>
+                        </div>
+                        <!-- Submit Button-->
+                        <button class="btn btn-primary text-uppercase" id="submitButton" type="submit">
+                          Register
+                        </button>
+                      </form>
+                    </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <!-- Footer-->
+      <%- include('layouts/footer') -%>
+        <!-- JS-->
+        <%- include('layouts/scripts') -%>
+  </body>
+
+</html>
