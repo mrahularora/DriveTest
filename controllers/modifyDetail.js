@@ -2,6 +2,7 @@ const Appointment = require("../models/Appointment");
 const BookedTimeSlot = require("../models/BookedTimeSlot");
 const UserAccount = require("../models/UserAccount");
 const { hash } = require("../utils/licenseCrypto");
+const isBookableDate = require("../utils/appointmentDate");
 
 const validDate = (value) => /^\d{4}-\d{2}-\d{2}$/.test(value || "") && !Number.isNaN(Date.parse(value));
 
@@ -34,8 +35,8 @@ module.exports = async (req, res, next) => {
     const date = testType === "G" ? req.body.Gdate : req.body.G2date;
     const time = req.body.timeSlot;
 
-    if (!["G2", "G"].includes(testType) || !validDate(date) || !time) {
-      return res.status(400).send("A valid test type, date, and time slot are required.");
+    if (!["G2", "G"].includes(testType) || !isBookableDate(date) || !time) {
+      return res.status(400).send("A valid test type, current or future date, and time slot are required.");
     }
     if (!(await Appointment.exists({ date, time }))) {
       return res.status(400).send("That appointment slot is not offered.");

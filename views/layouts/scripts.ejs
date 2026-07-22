@@ -140,6 +140,7 @@
     const appointmentDate = document.getElementById("appointmentDate");
     if (!appointmentDate) return;
     appointmentDate.valueAsDate = new Date();
+    appointmentDate.min = appointmentDate.value;
 
     async function updateTimeSlotAvailability() {
       try {

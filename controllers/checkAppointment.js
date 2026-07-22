@@ -1,18 +1,18 @@
 const Appointment = require("../models/Appointment");
+const isBookableDate = require("../utils/appointmentDate");
 
 module.exports = async (req, res) => {
   try {
     const selectedDate = req.params.date;
-    const dateObject = new Date(selectedDate);
+    if (!isBookableDate(selectedDate)) {
+      return res.status(400).json({ error: "Select today or a future date" });
+    }
 
-    if (dateObject) {
-      const checkDateAvailable = await Appointment.findOne({
-        date: dateObject,
-      });
-      if (checkDateAvailable) {
-        res.json({ time: checkDateAvailable.time });
-        return;
-      }
+    const checkDateAvailable = await Appointment.findOne({
+      date: selectedDate,
+    });
+    if (checkDateAvailable) {
+      return res.json({ time: checkDateAvailable.time });
     }
     res.status(404).json({ error: "Date not found" });
   } catch (err) {
