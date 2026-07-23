@@ -1,6 +1,6 @@
 # DriveTest Booking Kiosk
 
-A full-stack driving-test appointment system built with Node.js, Express, EJS, and MongoDB Atlas. The application supports separate workflows for drivers, examiners, and administrators.
+A full-stack driving-test appointment system built with Node.js, Express, EJS, and MongoDB Atlas. It provides role-aware workflows for drivers, examiners, and administrators from account creation through test results.
 
 ## Features
 
@@ -12,24 +12,25 @@ A full-stack driving-test appointment system built with Node.js, Express, EJS, a
 - See profile-completion progress and test eligibility guidance.
 - View appointment dates and available time slots.
 - Book G2 and G driving tests.
-- Update vehicle information from the G page.
-- View examiner comments and pass/fail results.
+- Cancel or reschedule a pending appointment.
+- Keep profile updates separate from appointment booking.
+- View appointment history, examiner comments, and pass/fail results.
 - Book a G test after qualifying for G2.
 
 ### Examiner
 
 - Access an examiner-only dashboard.
-- View drivers with booked appointments.
-- Filter appointments by G2 or G test type.
+- View pending G2 or G appointments in searchable, sortable tables.
 - Review driver and vehicle details.
 - Add examination comments.
-- Record pass or fail results.
+- Record pass or fail results once while preserving assessment history.
 
 ### Administrator
 
 - Access admin-only pages.
-- Create appointment slots from 9:00 AM to 2:00 PM.
+- Create and review grouped appointment slots from 9:00 AM to 2:00 PM.
 - Prevent duplicate slots for the same date and time.
+- See available, booked, completed, passed, and failed totals.
 - Review driver test results.
 - Generate licence-issue requests for successful drivers.
 
@@ -40,8 +41,10 @@ A full-stack driving-test appointment system built with Node.js, Express, EJS, a
 - EJS
 - MongoDB Atlas
 - Mongoose
-- Express Session
+- Express Session with MongoDB session storage
+- Helmet, login rate limiting, and CSRF protection
 - Node.js `crypto` with scrypt password hashing and AES-256-GCM licence encryption
+- Node.js built-in test runner
 - Bootstrap
 
 ## Assignment Progression
@@ -65,7 +68,7 @@ A full-stack driving-test appointment system built with Node.js, Express, EJS, a
 1. Clone the repository and open the project folder:
 
    ```powershell
-   cd DrivingTestMain
+   cd DriveTest
    ```
 
 2. Install dependencies:
@@ -106,16 +109,18 @@ Do not change `LICENSE_ENCRYPTION_KEY` after licence data has been saved, or exi
 ```powershell
 npm start     # Start the application
 npm run dev   # Start with automatic restarts
-npm test      # Run security and EJS rendering checks
+npm test      # Run the automated test suite
 ```
 
 ## Tests
 
-The `test` folder verifies:
+The automated checks cover:
 
-- Password hashing and verification
-- Licence-number encryption and decryption
-- Successful rendering of all EJS views
+- Authentication, role authorization, account recovery, and password changes
+- Password hashing, licence encryption, secure headers, rate limiting, and CSRF protection
+- Driver validation, profile updates, booking conflicts, cancellation, and rescheduling
+- Examiner result handling and administrator dashboard totals
+- Appointment dates, responsive tables, navigation, forms, and all EJS views
 
 Run the checks with:
 
@@ -126,7 +131,7 @@ npm test
 ## Project Structure
 
 ```text
-DrivingTestMain/
+DriveTest/
 |-- controllers/    Request handlers and application workflows
 |-- middleware/     Authentication and role authorization
 |-- models/         Mongoose schemas
