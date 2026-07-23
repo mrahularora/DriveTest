@@ -5,10 +5,10 @@ module.exports = async (req, res, next) => {
   try {
     const user = await UserAccount.findById(req.session.userId);
     if (!user) return res.redirect("/auth/logout");
-    const success = req.query.canceled === "1" ? "Your G2 appointment was cancelled."
-      : req.query.rescheduled === "1" ? "Your G2 appointment was rescheduled."
-      : req.query.booked === "1" ? "Your G2 appointment is confirmed."
-      : req.query.profile === "saved" ? "Profile saved." : "";
+    const success = req.query.canceled === "1" ? "Your G2 road test appointment has been cancelled."
+      : req.query.rescheduled === "1" ? `Your G2 road test has been rescheduled to ${user.appointmentDate} at ${user.appointmentTime}.`
+      : req.query.booked === "1" ? `Your G2 road test is confirmed for ${user.appointmentDate} at ${user.appointmentTime}.`
+      : req.query.profile === "saved" ? "Your profile has been saved." : "";
     res.render("g2test", {
       user,
       error: "",

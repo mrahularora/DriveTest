@@ -27,7 +27,7 @@ module.exports = async (req, res, next) => {
       if (!hasRealValue(req.body.make) || !hasRealValue(req.body.model) ||
           !Number.isInteger(year) || year < 1900 || year > new Date().getFullYear() + 1 ||
           !hasRealValue(req.body.plateNo)) {
-        return formError(res, user, "G", 400, "Enter valid car details.");
+        return formError(res, user, "G", 400, "Enter a valid vehicle make, model, year, and plate number.");
       }
       await UserAccount.updateOne(
         { _id: user._id },
@@ -51,11 +51,11 @@ module.exports = async (req, res, next) => {
           !/^[A-Z0-9]{8}$/.test(licenceNo || "") || !Number.isInteger(age) || age < 16 || age > 100 ||
           !validDate(req.body.dob) || !hasRealValue(req.body.make) || !hasRealValue(req.body.model) ||
           !Number.isInteger(year) || year < 1900 || year > currentYear + 1 || !hasRealValue(req.body.plateNo)) {
-        return formError(res, user, "G2", 400, "Enter valid personal, licence, and vehicle details.");
+        return formError(res, user, "G2", 400, "Enter valid information in every required personal, licence, and vehicle field.");
       }
       const licenceHash = hash(licenceNo);
       if (await UserAccount.exists({ licenceHash, _id: { $ne: user._id } })) {
-        return formError(res, user, "G2", 409, "Licence number is already registered.");
+        return formError(res, user, "G2", 409, "This licence number is already linked to another account.");
       }
       await UserAccount.updateOne(
         { _id: user._id },
@@ -82,7 +82,7 @@ module.exports = async (req, res, next) => {
     const currentPending = user.status === "Pending" && user.appointmentDate;
     if (req.body.action === "cancel") {
       if (!["G2", "G"].includes(testType) || !currentPending || user.testType !== testType) {
-        return formError(res, user, testType, 409, "This appointment can no longer be cancelled.");
+        return formError(res, user, testType, 409, "This appointment is no longer available to cancel.");
       }
       const session = await mongoose.startSession();
       try {
@@ -101,33 +101,33 @@ module.exports = async (req, res, next) => {
     }
 
     if (req.body.action && req.body.action !== "reschedule") {
-      return formError(res, user, testType, 400, "Invalid appointment action.");
+      return formError(res, user, testType, 400, "Choose a valid appointment action.");
     }
     if (req.body.action === "reschedule" && (!currentPending || user.testType !== testType)) {
-      return formError(res, user, testType, 409, "This appointment can no longer be rescheduled.");
+      return formError(res, user, testType, 409, "This appointment is no longer available to reschedule.");
     }
     if (!req.body.action && currentPending) {
-      return formError(res, user, testType, 409, "Cancel or reschedule your current appointment first.");
+      return formError(res, user, testType, 409, "Cancel or reschedule your current appointment before booking another.");
     }
 
     const date = testType === "G" ? req.body.Gdate : req.body.G2date;
     const time = req.body.timeSlot;
 
     if (!["G2", "G"].includes(testType) || !isBookableDate(date) || !time) {
-      return formError(res, user, testType, 400, "Select a valid test type, current or future date, and time slot.");
+      return formError(res, user, testType, 400, "Choose a valid road test, a date from today onward, and an appointment time.");
     }
     if (testType === "G2" && !getDriverJourney(user, "G2").profile.complete) {
-      return formError(res, user, testType, 403, "Save a complete profile before booking a G2 test.");
+      return formError(res, user, testType, 403, "Complete and save your profile before booking the G2 road test.");
     }
     if (!(await Appointment.exists({ date, time }))) {
-      return formError(res, user, testType, 400, "That appointment slot is not offered.");
+      return formError(res, user, testType, 400, "That appointment time is not offered on the selected date.");
     }
     if (testType === "G" && !["G2", "G"].includes(user.qualified)) {
-      return formError(res, user, testType, 403, "Pass the G2 test before booking a G test.");
+      return formError(res, user, testType, 403, "Pass the G2 road test before booking the G road test.");
     }
 
     const conflict = await BookedTimeSlot.exists({ date, time, userId: { $ne: user._id } });
-    if (conflict) return formError(res, user, testType, 409, "That appointment slot was already booked.");
+    if (conflict) return formError(res, user, testType, 409, "That appointment time was just booked. Choose another time.");
 
     const update = {
       appointmentDate: date,
@@ -159,7 +159,7 @@ module.exports = async (req, res, next) => {
     res.redirect(testType === "G" ? `/g?${result}=1` : `/g2?${result}=1`);
   } catch (error) {
     if (error.code === 11000 && user) {
-      return formError(res, user, req.body.testType, 409, "That appointment or licence is already taken.");
+      return formError(res, user, req.body.testType, 409, "That appointment time or licence number is already in use.");
     }
     next(error);
   }

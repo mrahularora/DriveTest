@@ -156,7 +156,7 @@ test("driver validation errors render inside the correct form", async () => {
   }
   assert.equal(res.statusCode, 400);
   assert.equal(res.view, "gtest");
-  assert.equal(res.locals.error, "Enter valid car details.");
+  assert.equal(res.locals.error, "Enter a valid vehicle make, model, year, and plate number.");
 });
 
 test("profile updates save driver details without booking", async () => {
@@ -215,7 +215,7 @@ test("G2 booking requires a saved complete profile", async () => {
     Appointment.exists = originals.appointmentExists;
   }
   assert.equal(res.statusCode, 403);
-  assert.equal(res.locals.error, "Save a complete profile before booking a G2 test.");
+  assert.equal(res.locals.error, "Complete and save your profile before booking the G2 road test.");
 });
 
 test("examiner validation errors stay on the assessment form", async () => {

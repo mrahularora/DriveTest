@@ -54,15 +54,20 @@ test("driver journey reports profile progress and G eligibility", () => {
 
   const incomplete = getDriverJourney({ ...user, firstName: "default", carDetails: {} }, "G2");
   assert.equal(incomplete.profile.complete, false);
-  assert.match(incomplete.guidance, /first name/);
+  assert.equal(incomplete.guidance, "Finish your profile before booking. Missing: first name, vehicle make, vehicle model, vehicle year, plate number.");
 
   const gLocked = getDriverJourney(user, "G");
   assert.equal(gLocked.canBook, false);
-  assert.match(gLocked.guidance, /Pass the G2 test/);
+  assert.equal(gLocked.guidance, "Pass the G2 road test before booking the G road test.");
 
   const g2Passed = getDriverJourney({ ...user, qualified: "G2" }, "G2");
   assert.equal(g2Passed.canBook, false);
-  assert.match(g2Passed.guidance, /passed the G2 test/);
+  assert.equal(g2Passed.guidance, "You passed the G2 road test.");
+
+  const pending = getDriverJourney({ ...user, appointmentDate: "2026-07-24", appointmentTime: "09:00" }, "G2");
+  assert.equal(pending.guidance, "Your G2 road test is booked for 2026-07-24 at 09:00.");
+  const pendingWithoutTime = getDriverJourney({ ...user, appointmentDate: "2026-07-24" }, "G2");
+  assert.equal(pendingWithoutTime.guidance, "Your G2 road test is booked for 2026-07-24.");
 });
 
 test("G2 profile and booking fields use separate forms", async () => {

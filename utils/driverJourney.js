@@ -29,19 +29,19 @@ module.exports = (user, testType) => {
   const prerequisiteMet = testType === "G2" || ["G2", "G"].includes(user.qualified);
   const canBook = profile.complete && prerequisiteMet && !pending && !passed;
 
-  let guidance = `Your profile is complete. You can book a ${testType} test.`;
+  let guidance = `Your profile is ready. Choose a date and time to book your ${testType} road test.`;
   let tone = "success";
   if (!profile.complete) {
-    guidance = `Complete the missing profile fields before booking: ${missing.join(", ")}.`;
+    guidance = `Finish your profile before booking. Missing: ${missing.join(", ")}.`;
     tone = "warning";
   } else if (!prerequisiteMet) {
-    guidance = "Pass the G2 test before booking a G test.";
+    guidance = "Pass the G2 road test before booking the G road test.";
     tone = "warning";
   } else if (pending) {
-    guidance = `Your ${testType} appointment is booked and awaiting completion.`;
+    guidance = `Your ${testType} road test is booked for ${user.appointmentDate}${user.appointmentTime ? ` at ${user.appointmentTime}` : ""}.`;
     tone = "info";
   } else if (passed) {
-    guidance = `You have passed the ${testType} test.`;
+    guidance = `You passed the ${testType} road test.`;
   }
 
   return { profile, canBook, guidance, tone };
