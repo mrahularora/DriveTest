@@ -1,76 +1,25 @@
-.modifiedMasthead {
-  position: relative;
+.page-header {
   margin-bottom: 3rem;
-  padding-top: calc(8rem + 57px);
-  padding-bottom: 8rem;
-  background: no-repeat center center;
-  background-color: #6c757d;
-  background-size: cover;
-  background-attachment: scroll;
-}
-.modifiedMasthead:before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #212529;
-  opacity: 0.5;
-}
-.modifiedMasthead .page-heading,
-.modifiedMasthead .post-heading,
-.modifiedMasthead .site-heading {
+  padding: 7rem 0 3rem;
+  background: linear-gradient(135deg, #123f46, #00677a);
   color: #fff;
 }
-.modifiedMasthead .page-heading,
-.modifiedMasthead .site-heading {
-  text-align: center;
+
+.page-header-copy {
+  max-width: 760px;
 }
-.modifiedMasthead .page-heading h1,
-.modifiedMasthead .page-heading .h1,
-.modifiedMasthead .site-heading h1,
-.modifiedMasthead.site-heading .h1 {
-  font-size: 3rem;
+
+.page-header h1 {
+  margin: 0;
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  letter-spacing: -0.04em;
 }
-.modifiedMasthead .page-heading .subheading,
-.modifiedMasthead.site-heading .subheading {
-  font-size: 1.5rem;
-  font-weight: 300;
-  line-height: 1.1;
-  display: block;
-  margin-top: 0.625rem;
-  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-}
-.modifiedMasthead .post-heading h1,
-.modifiedMasthead .post-heading .h1 {
-  font-size: 2.25rem;
-}
-.modifiedMasthead .post-heading .meta,
-.modifiedMasthead .post-heading .subheading {
-  line-height: 1.1;
-  display: block;
-}
-.modifiedMasthead .post-heading .subheading {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0.75rem 0 2rem;
-  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-}
-.modifiedMasthead .post-heading .meta {
-  font-size: 1.25rem;
-  font-weight: 300;
-  font-style: italic;
-  font-family: "Lora", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol", "Noto Color Emoji";
-}
-.modifiedMasthead .post-heading .meta a {
-  color: #fff;
+
+.page-header p {
+  margin: 0.75rem 0 0;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1.1rem;
+  opacity: 0.85;
 }
 .firstNameError
   .lastNameError
@@ -144,7 +93,7 @@ summary:focus-visible {
   font-weight: 800;
 }
 
-.home-hero {
+header.home-hero {
   min-height: 680px;
   margin-bottom: 0;
   display: flex;
@@ -266,22 +215,9 @@ summary:focus-visible {
 .process-step h3 {
   margin-top: 0.25rem;
 }
-@media (min-width: 992px) {
-  .modifiedMasthead {
-    padding-top: 12.5rem;
-    padding-bottom: 12.5rem;
-  }
-  .modifiedMasthead .page-heading h1,
-  .modifiedMasthead.page-heading .h1,
-  .modifiedMasthead .site-heading h1,
-  .modifiedMasthead .site-heading .h1 {
-    font-size: 5rem;
-  }
-  .modifiedMasthead .post-heading h1,
-  .modifiedMasthead .post-heading .h1 {
-    font-size: 3.5rem;
-  }
-  .modifiedMasthead .post-heading .subheading {
-    font-size: 1.875rem;
+@media (max-width: 575.98px) {
+  .page-header {
+    margin-bottom: 2rem;
+    padding: 6rem 0 2.25rem;
   }
 }

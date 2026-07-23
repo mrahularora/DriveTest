@@ -198,6 +198,10 @@ test("all application views render", async () => {
     });
     assert.equal((html.match(/<head>/g) || []).length, 1, `${file} must have one head`);
     assert.match(html, /<title>.+ \| DriveTest<\/title>/, `${file} must have a page title`);
+    if (file !== "index.ejs") {
+      assert.match(html, /<header class="page-header">/, `${file} must use the shared page header`);
+      assert.doesNotMatch(html, /class="(?:masthead|modifiedMasthead)"/, `${file} must not use a legacy masthead`);
+    }
     const ids = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]));
     for (const match of html.matchAll(/<label[^>]+for="([^"]+)"/g)) {
       assert.equal(ids.has(match[1]), true, `${file} label must target #${match[1]}`);

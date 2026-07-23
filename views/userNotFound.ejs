@@ -5,16 +5,11 @@
   <body>
     <!-- Navigation-->
     <%- include('layouts/navbar'); -%>
-    <header
-      class="masthead"
-      style="background-image: url('assets/img/post-bg.jpg')"
-    ></header>
+    <%- include('layouts/pageHeader', { heading: 'User not found', description: 'We could not find that driver record.' }); -%>
     <main class="mb-4">
       <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
           <div class="col-md-10 col-lg-8 col-xl-7">
-            <h1>User Not Found :(</h1>
-
             <a class="btn btn-primary text-uppercase" href="/g">Go Back</a>
 
             <!-- Footer-->
