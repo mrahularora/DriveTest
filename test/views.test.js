@@ -108,7 +108,11 @@ test("pending appointments offer reschedule and cancellation controls", async ()
   assert.match(html, /name="action" value="cancel"/);
   assert.match(html, /Current appointment/);
   assert.match(html, /class="badge fs-6 px-3 py-2/);
-  assert.match(html, /Cancel appointment/);
+  assert.match(html, /Manage appointment/);
+  assert.match(html, /current appointment stays booked until the new time is saved/);
+  assert.match(html, /data-confirm="Cancel your G2 appointment on 2999-01-01 at 09:00\?/);
+  assert.match(html, /Cancel this appointment/);
+  assert.doesNotMatch(html, /onsubmit=/);
 });
 
 test("G appointments use the shared booking and management layout", async () => {
@@ -291,6 +295,7 @@ test("navigation shows role links and marks the current page", async () => {
   assert.doesNotMatch(scripts, /jquery/i);
   assert.match(scripts, /Unavailable/);
   assert.match(scripts, /selected\. Continue to confirm your appointment\./);
+  assert.match(scripts, /window\.confirm\(form\.dataset\.confirm\)/);
 });
 
 test("footer has current product copy without placeholder links", async () => {

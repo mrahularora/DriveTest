@@ -10,6 +10,11 @@
     document.querySelectorAll("#bookingAppointmentDate").forEach((input) => {
       input.min = today.toISOString().slice(0, 10);
     });
+    document.querySelectorAll("form[data-confirm]").forEach((form) => {
+      form.addEventListener("submit", (event) => {
+        if (!window.confirm(form.dataset.confirm)) event.preventDefault();
+      });
+    });
 
     navToggle.addEventListener("click", function () {
       const expanded = navToggle.getAttribute("aria-expanded") === "true";

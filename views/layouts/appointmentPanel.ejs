@@ -20,30 +20,38 @@
         <% } %>
 
         <% if (user.status === "Pending") { %>
-          <details class="mt-3">
-            <summary class="btn btn-outline-primary">Reschedule</summary>
-            <form action="/edit" method="POST" class="mt-3">
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-              <input type="hidden" name="action" value="reschedule" />
-              <input type="hidden" name="testType" value="<%= testType %>" />
-              <div class="form-floating">
-                <input type="date" name="<%= dateField %>" class="form-control" id="bookingAppointmentDate" aria-describedby="headerTimeSlot" onchange="getTimeSlot('<%- user._id %>')" required />
-                <label for="bookingAppointmentDate">New <%= testType %> appointment date</label>
-              </div>
-              <p class="alert alert-secondary mt-3 mb-0" id="headerTimeSlot" role="status" aria-live="polite">Choose a date to load available times.</p>
-              <div class="mt-3" id="timeSlotsSection" role="group" aria-labelledby="time-slots-heading" hidden>
-                <h3 class="h5" id="time-slots-heading">Available times</h3>
-                <div class="row g-2" id="selectSlots"></div>
-              </div>
-              <button class="btn btn-primary mt-3" type="submit" disabled>Save new appointment</button>
-            </form>
+          <details class="mt-4">
+            <summary class="btn btn-outline-secondary">Manage appointment</summary>
+            <div class="border-top mt-3 pt-3">
+              <h4 class="h5">Reschedule appointment</h4>
+              <p class="text-muted">Choose a replacement date and time. Your current appointment stays booked until the new time is saved.</p>
+              <form action="/edit" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                <input type="hidden" name="action" value="reschedule" />
+                <input type="hidden" name="testType" value="<%= testType %>" />
+                <div class="form-floating">
+                  <input type="date" name="<%= dateField %>" class="form-control" id="bookingAppointmentDate" aria-describedby="headerTimeSlot" onchange="getTimeSlot('<%- user._id %>')" required />
+                  <label for="bookingAppointmentDate">New <%= testType %> appointment date</label>
+                </div>
+                <p class="alert alert-secondary mt-3 mb-0" id="headerTimeSlot" role="status" aria-live="polite">Choose a date to load available times.</p>
+                <div class="mt-3" id="timeSlotsSection" role="group" aria-labelledby="time-slots-heading" hidden>
+                  <h3 class="h5" id="time-slots-heading">Available times</h3>
+                  <div class="row g-2" id="selectSlots"></div>
+                </div>
+                <button class="btn btn-primary mt-3" type="submit" disabled>Save new appointment</button>
+              </form>
+            </div>
+            <div class="border-top mt-4 pt-3">
+              <h4 class="h5">Cancel appointment</h4>
+              <p class="text-muted">Canceling releases <strong><%= user.appointmentDate %> at <%= user.appointmentTime %></strong>. This cannot be undone.</p>
+              <form action="/edit" method="POST" data-confirm="Cancel your <%= testType %> appointment on <%= user.appointmentDate %> at <%= user.appointmentTime %>? The time will be released and this cannot be undone.">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                <input type="hidden" name="action" value="cancel" />
+                <input type="hidden" name="testType" value="<%= testType %>" />
+                <button class="btn btn-outline-danger" type="submit">Cancel this appointment</button>
+              </form>
+            </div>
           </details>
-          <form action="/edit" method="POST" class="mt-3" onsubmit="return confirm('Cancel this appointment?')">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-            <input type="hidden" name="action" value="cancel" />
-            <input type="hidden" name="testType" value="<%= testType %>" />
-            <button class="btn btn-outline-danger" type="submit">Cancel appointment</button>
-          </form>
         <% } %>
       </div>
     </div>
