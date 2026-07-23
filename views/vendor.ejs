@@ -6,10 +6,12 @@
     <!-- Navigation-->
     <%- include('layouts/navbar'); -%>
     <%- include('layouts/pageHeader', { heading: 'Issue licence', description: 'Confirm the successful test before sending the print request.' }); -%>
-    <h3 style="text-align: center">
-      Request generated for printing <%= allDetails.qualified %>
-      licence for <%= allDetails.firstName %> <%= allDetails.lastName %>
-    </h3><br /><br />
+    <main class="container px-4 px-lg-5 text-center mb-4">
+      <p class="h3">
+        Request generated for printing <%= allDetails.qualified %>
+        licence for <%= allDetails.firstName %> <%= allDetails.lastName %>
+      </p>
+    </main>
         <!-- Footer-->
         <%- include('layouts/footer') -%>
         <!-- JS-->

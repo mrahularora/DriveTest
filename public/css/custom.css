@@ -73,13 +73,10 @@ body {
   padding: clamp(1.25rem, 3vw, 2rem);
 }
 
-.firstNameError
-  .lastNameError
-  .phoneError
-  .usernameError
-  .passwordError
-  .confirmPasswordError {
-  color: red;
+.usernameError,
+.passwordError,
+.confirmPasswordError {
+  color: var(--bs-danger);
 }
 .form-group {
   margin-bottom: 1.5rem;
@@ -213,10 +210,25 @@ summary:focus-visible {
 }
 
 header.home-hero {
+  position: relative;
   min-height: 680px;
   margin-bottom: 0;
   display: flex;
   align-items: center;
+  background: var(--portal-header) url("/assets/img/home-bg.jpg") center / cover
+    no-repeat;
+}
+
+header.home-hero::before {
+  position: absolute;
+  inset: 0;
+  background: #212529;
+  content: "";
+  opacity: 0.5;
+}
+
+.home-hero > .container {
+  z-index: 1;
 }
 
 .home-hero h1 {

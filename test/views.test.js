@@ -200,8 +200,9 @@ test("all application views render", async () => {
     assert.match(html, /<title>.+ \| DriveTest<\/title>/, `${file} must have a page title`);
     if (file !== "index.ejs") {
       assert.match(html, /<header class="page-header">/, `${file} must use the shared page header`);
-      assert.doesNotMatch(html, /class="(?:masthead|modifiedMasthead)"/, `${file} must not use a legacy masthead`);
     }
+    assert.doesNotMatch(html, /class="(?:masthead|modifiedMasthead)"/, `${file} must not use a legacy masthead`);
+    assert.doesNotMatch(html, /\sstyle="/, `${file} must not use inline presentation styles`);
     const ids = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]));
     for (const match of html.matchAll(/<label[^>]+for="([^"]+)"/g)) {
       assert.equal(ids.has(match[1]), true, `${file} label must target #${match[1]}`);

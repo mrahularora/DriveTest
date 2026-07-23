@@ -11011,15 +11011,6 @@ header.masthead {
   background-size: cover;
   background-attachment: scroll;
 }
-.firstNameError
-  .lastNameError
-  .phoneError
-  .usernameError
-  .passwordError
-  .confirmPasswordError {
-  color: red;
-}
-
 header.masthead:before {
   content: "";
   position: absolute;

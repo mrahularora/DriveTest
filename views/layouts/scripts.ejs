@@ -192,7 +192,7 @@
     const selectedDate = dateInput.value;
 
     selectSlotList.replaceChildren();
-    timeSlotsSection.style.display = "none";
+    timeSlotsSection.hidden = true;
     submitButton.disabled = true;
     headerTime.textContent = "Loading available times...";
 
@@ -240,7 +240,7 @@
         selectSlotList.appendChild(taskDiv);
       });
       headerTime.textContent = "Choose an available time.";
-      timeSlotsSection.style.display = "block";
+      timeSlotsSection.hidden = false;
     } catch (error) {
       headerTime.textContent = "Unable to load appointment times. Please try again.";
     }
