@@ -47,6 +47,32 @@ body {
   font-size: 1.1rem;
   opacity: 0.85;
 }
+
+.page-header + main,
+.page-header + .container {
+  margin-top: 0 !important;
+}
+
+.page-header + .container {
+  margin-bottom: 3rem;
+}
+
+.page-header + main h2,
+.page-header + .container h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.card {
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-card-radius);
+  box-shadow: var(--portal-card-shadow);
+}
+
+.card-body {
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+
 .firstNameError
   .lastNameError
   .phoneError
@@ -56,7 +82,16 @@ body {
   color: red;
 }
 .form-group {
-  margin-bottom: 1.5rem; /* Adjust as needed for spacing between fields */
+  margin-bottom: 1.5rem;
+}
+
+.form-floating + .form-floating {
+  margin-top: 1rem;
+}
+
+.form-label,
+form legend {
+  font-weight: 700;
 }
 
 .form-actions {
