@@ -161,13 +161,22 @@ test("drivers see completed appointments and results", async () => {
     qualified: "G2",
     status: "Passed",
     pass: true,
-    appointmentHistory: [{
-      testType: "G2",
-      date: "2026-07-20",
-      time: "09:00",
-      status: "Passed",
-      comment: "Safe drive",
-    }],
+    appointmentHistory: [
+      {
+        testType: "G2",
+        date: "2026-07-20",
+        time: "09:00",
+        status: "Passed",
+        comment: "Safe drive",
+      },
+      {
+        testType: "G",
+        date: "2026-07-22",
+        time: "11:00",
+        status: "Failed",
+        comment: "Check mirrors",
+      },
+    ],
   };
   const html = await ejs.renderFile(path.join(__dirname, "..", "views", "g2test.ejs"), {
     loggedIn: true,
@@ -180,9 +189,13 @@ test("drivers see completed appointments and results", async () => {
     journey: getDriverJourney(completedUser, "G2"),
   });
   assert.match(html, /Test history/);
-  assert.match(html, /G2 test · 2026-07-20 at 09:00/);
-  assert.match(html, /class="badge bg-success">Passed<\/span>/);
+  assert.match(html, /row row-cols-1 row-cols-md-2/);
+  assert.match(html, /G2 road test/);
+  assert.match(html, /datetime="2026-07-20T09:00"/);
+  assert.match(html, /badge rounded-pill bg-success">Passed<\/span>/);
+  assert.match(html, /badge rounded-pill bg-danger">Failed<\/span>/);
   assert.match(html, /Safe drive/);
+  assert.ok(html.indexOf("2026-07-22") < html.indexOf("2026-07-20"));
 });
 
 test("staff appointment tables are searchable, sortable, and responsive", async () => {

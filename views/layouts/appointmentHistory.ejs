@@ -3,14 +3,23 @@
     <h2 class="h4" id="appointment-history-heading">Test history</h2>
     <% const history = user.appointmentHistory || []; %>
     <% if (history.length) { %>
-      <ul class="list-group list-group-flush">
+      <ul class="row row-cols-1 row-cols-md-2 g-3 list-unstyled mb-0" aria-label="Completed road tests">
         <% [...history].reverse().forEach(function(item) { %>
-          <li class="list-group-item px-0">
-            <div class="d-flex justify-content-between gap-3">
-              <strong><%= item.testType %> test · <%= item.date %> at <%= item.time %></strong>
-              <span class="badge <%= item.status === 'Passed' ? 'bg-success' : 'bg-danger' %>"><%= item.status %></span>
-            </div>
-            <% if (item.comment) { %><p class="mb-0 mt-2"><%= item.comment %></p><% } %>
+          <li class="col">
+            <article class="border rounded border-start border-4 <%= item.status === 'Passed' ? 'border-success' : 'border-danger' %> p-3 h-100">
+              <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+                <div>
+                  <p class="small text-muted text-uppercase fw-bold mb-1"><%= item.testType %> road test</p>
+                  <h3 class="h5 mb-0"><time datetime="<%= item.date %>"><%= item.date %></time></h3>
+                </div>
+                <span class="badge rounded-pill <%= item.status === 'Passed' ? 'bg-success' : 'bg-danger' %>"><%= item.status %></span>
+              </div>
+              <p class="small text-muted mt-2 mb-0">Appointment time: <time datetime="<%= item.date %>T<%= item.time %>"><%= item.time %></time></p>
+              <% if (item.comment) { %>
+                <p class="small text-uppercase fw-bold mt-3 mb-1">Examiner comment</p>
+                <p class="mb-0"><%= item.comment %></p>
+              <% } %>
+            </article>
           </li>
         <% }); %>
       </ul>
