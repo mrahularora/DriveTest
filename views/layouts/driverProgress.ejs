@@ -1,8 +1,10 @@
 <section class="card mb-4" aria-labelledby="profile-progress-heading">
   <div class="card-body">
-    <h2 class="h5" id="profile-progress-heading">Profile completion</h2>
+    <div class="alert alert-<%= journey.tone %> mb-4" role="status">
+      <p class="small fw-bold text-uppercase mb-1">Recommended next step</p>
+      <h2 class="h4 mb-0" id="profile-progress-heading"><%= journey.guidance %></h2>
+    </div>
+    <p class="mb-2"><strong>Profile completion: <%= journey.profile.percent %>%</strong> &mdash; <%= journey.profile.completed %> of <%= journey.profile.total %> required fields</p>
     <progress class="w-100" value="<%= journey.profile.percent %>" max="100"><%= journey.profile.percent %>%</progress>
-    <p class="mb-2"><strong><%= journey.profile.percent %>% complete</strong> &mdash; <%= journey.profile.completed %> of <%= journey.profile.total %> required fields</p>
-    <div class="alert alert-<%= journey.tone %> mb-0" role="status"><%= journey.guidance %></div>
   </div>
 </section>

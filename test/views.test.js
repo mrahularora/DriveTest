@@ -86,6 +86,7 @@ test("G2 profile and booking fields use separate forms", async () => {
   assert.match(profileForm, /id="personal-details-heading">Personal and licence details/);
   assert.match(profileForm, /id="vehicle-details-heading">Vehicle details/);
   assert.match(profileForm, /class="row g-3"/);
+  assert.match(html, /Recommended next step/);
   assert.match(bookingForm, /Choose a date to load available times\./);
   assert.match(bookingForm, /type="submit" disabled/);
 });
@@ -104,6 +105,8 @@ test("pending appointments offer reschedule and cancellation controls", async ()
   });
   assert.match(html, /name="action" value="reschedule"/);
   assert.match(html, /name="action" value="cancel"/);
+  assert.match(html, /Current appointment/);
+  assert.match(html, /class="badge fs-6 px-3 py-2/);
   assert.match(html, /Cancel appointment/);
 });
 
@@ -143,6 +146,7 @@ test("G appointments use the shared booking and management layout", async () => 
     journey: getDriverJourney(bookableUser, "G"),
   });
   assert.match(bookable, /name="Gdate"/);
+  assert.match(bookable, /Recommended action/);
   assert.match(bookable, /Book G test/);
 });
 
