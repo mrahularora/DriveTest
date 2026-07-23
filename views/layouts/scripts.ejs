@@ -1,5 +1,3 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     let scrollPos = 0;
@@ -7,6 +5,11 @@
     const navToggle = mainNav.querySelector(".navbar-toggler");
     const navMenu = document.getElementById("navbarResponsive");
     const headerHeight = mainNav.clientHeight;
+    const today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    document.querySelectorAll("#bookingAppointmentDate").forEach((input) => {
+      input.min = today.toISOString().slice(0, 10);
+    });
 
     navToggle.addEventListener("click", function () {
       const expanded = navToggle.getAttribute("aria-expanded") === "true";
@@ -190,11 +193,19 @@
     const form = dateInput.closest("form");
     const submitButton = form.querySelector('button[type="submit"]');
     const selectedDate = dateInput.value;
+    const setStatus = (message, tone) => {
+      headerTime.textContent = message;
+      headerTime.className = `alert alert-${tone} mt-3 mb-0`;
+    };
 
     selectSlotList.replaceChildren();
     timeSlotsSection.hidden = true;
     submitButton.disabled = true;
-    headerTime.textContent = "Loading available times...";
+    if (!selectedDate) {
+      setStatus("Choose a date to load available times.", "secondary");
+      return;
+    }
+    setStatus("Loading available times...", "info");
 
     try {
       const [response, bookedResponse] = await Promise.all([
@@ -203,46 +214,61 @@
       ]);
 
       if (response.status === 404) {
-        headerTime.textContent = "No appointment times are offered for this date.";
+        setStatus("No appointment times are offered for this date. Choose another date.", "warning");
         return;
       }
       if (!response.ok || !bookedResponse.ok) throw new Error("Unable to load appointments");
 
       const offered = (await response.json()).time || [];
       const booked = await bookedResponse.json();
-      const available = offered.filter((slot) => !booked.some((item) =>
-        item.time === slot && String(item.userId) !== String(sessionId)
-      ));
+      let availableCount = 0;
+      offered.forEach((slot) => {
+        const available = !booked.some((item) =>
+          item.time === slot && String(item.userId) !== String(sessionId)
+        );
+        if (available) availableCount += 1;
 
-      if (!available.length) {
-        headerTime.textContent = "No available times remain for this date. Choose another date.";
-        return;
-      }
-
-      available.forEach((slot) => {
-        const taskDiv = document.createElement("div");
+        const slotColumn = document.createElement("div");
         const radioInput = document.createElement("input");
         const id = `slot-${slot.replace(":", "-")}`;
-        taskDiv.className = "form-check form-check-inline";
-        radioInput.className = "form-check-input";
+        slotColumn.className = "col-6 col-sm-4";
+        radioInput.className = "btn-check";
         radioInput.type = "radio";
         radioInput.name = "timeSlot";
         radioInput.id = id;
         radioInput.value = slot;
+        radioInput.autocomplete = "off";
+        radioInput.disabled = !available;
         radioInput.required = true;
         const label = document.createElement("label");
-        label.className = "form-check-label";
+        label.className = `btn ${available ? "btn-outline-primary" : "btn-outline-secondary"} text-start w-100 h-100`;
         label.htmlFor = id;
-        label.textContent = slot;
-        radioInput.addEventListener("change", () => { submitButton.disabled = false; });
-        taskDiv.appendChild(radioInput);
-        taskDiv.appendChild(label);
-        selectSlotList.appendChild(taskDiv);
+        const time = document.createElement("strong");
+        const state = document.createElement("span");
+        time.className = "d-block";
+        time.textContent = slot;
+        state.className = "small";
+        state.textContent = available ? "Available" : "Unavailable";
+        label.appendChild(time);
+        label.appendChild(state);
+        radioInput.addEventListener("change", () => {
+          submitButton.disabled = false;
+          setStatus(`${slot} selected. Continue to confirm your appointment.`, "success");
+        });
+        slotColumn.appendChild(radioInput);
+        slotColumn.appendChild(label);
+        selectSlotList.appendChild(slotColumn);
       });
-      headerTime.textContent = "Choose an available time.";
+
       timeSlotsSection.hidden = false;
+      setStatus(
+        availableCount
+          ? `${availableCount} time${availableCount === 1 ? " is" : "s are"} available. Select one to continue.`
+          : "No available times remain for this date. Choose another date.",
+        availableCount ? "info" : "warning"
+      );
     } catch (error) {
-      headerTime.textContent = "Unable to load appointment times. Please try again.";
+      setStatus("Unable to load appointment times. Please try again.", "danger");
     }
   }
 </script>

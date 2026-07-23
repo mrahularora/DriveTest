@@ -27,13 +27,13 @@
               <input type="hidden" name="action" value="reschedule" />
               <input type="hidden" name="testType" value="<%= testType %>" />
               <div class="form-floating">
-                <input type="date" name="<%= dateField %>" class="form-control" id="bookingAppointmentDate" onchange="getTimeSlot('<%- user._id %>')" required />
+                <input type="date" name="<%= dateField %>" class="form-control" id="bookingAppointmentDate" aria-describedby="headerTimeSlot" onchange="getTimeSlot('<%- user._id %>')" required />
                 <label for="bookingAppointmentDate">New <%= testType %> appointment date</label>
               </div>
-              <p class="mt-3" id="headerTimeSlot" role="status" aria-live="polite">Choose a date to load available times.</p>
-              <div class="mt-3" id="timeSlotsSection" hidden>
-                <h3 class="h5">Select a time</h3>
-                <div id="selectSlots"></div>
+              <p class="alert alert-secondary mt-3 mb-0" id="headerTimeSlot" role="status" aria-live="polite">Choose a date to load available times.</p>
+              <div class="mt-3" id="timeSlotsSection" role="group" aria-labelledby="time-slots-heading" hidden>
+                <h3 class="h5" id="time-slots-heading">Available times</h3>
+                <div class="row g-2" id="selectSlots"></div>
               </div>
               <button class="btn btn-primary mt-3" type="submit" disabled>Save new appointment</button>
             </form>
@@ -58,13 +58,13 @@
           <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <input type="hidden" name="testType" value="<%= testType %>" />
           <div class="form-floating">
-            <input type="date" name="<%= dateField %>" class="form-control" id="bookingAppointmentDate" onchange="getTimeSlot('<%- user._id %>')" required />
+            <input type="date" name="<%= dateField %>" class="form-control" id="bookingAppointmentDate" aria-describedby="headerTimeSlot" onchange="getTimeSlot('<%- user._id %>')" required />
             <label for="bookingAppointmentDate">Select <%= testType %> appointment date</label>
           </div>
-          <p class="mt-3" id="headerTimeSlot" role="status" aria-live="polite">Choose a date to load available times.</p>
-          <div class="mt-3" id="timeSlotsSection" hidden>
-            <h3 class="h5">Select a time</h3>
-            <div id="selectSlots"></div>
+          <p class="alert alert-secondary mt-3 mb-0" id="headerTimeSlot" role="status" aria-live="polite">Choose a date to load available times.</p>
+          <div class="mt-3" id="timeSlotsSection" role="group" aria-labelledby="time-slots-heading" hidden>
+            <h3 class="h5" id="time-slots-heading">Available times</h3>
+            <div class="row g-2" id="selectSlots"></div>
           </div>
           <button class="btn btn-primary mt-3" type="submit" disabled>Book <%= testType %> test</button>
         </form>

@@ -88,6 +88,7 @@ test("G2 profile and booking fields use separate forms", async () => {
   assert.match(profileForm, /class="row g-3"/);
   assert.match(html, /Recommended next step/);
   assert.match(bookingForm, /Choose a date to load available times\./);
+  assert.match(bookingForm, /id="selectSlots" class="row g-2"|class="row g-2" id="selectSlots"/);
   assert.match(bookingForm, /type="submit" disabled/);
 });
 
@@ -287,6 +288,9 @@ test("navigation shows role links and marks the current page", async () => {
   const scripts = await ejs.renderFile(path.join(__dirname, "..", "views", "layouts", "scripts.ejs"));
   assert.match(scripts, /navMenu\.classList\.toggle\("show", !expanded\)/);
   assert.doesNotMatch(scripts, /bootstrap\.bundle/);
+  assert.doesNotMatch(scripts, /jquery/i);
+  assert.match(scripts, /Unavailable/);
+  assert.match(scripts, /selected\. Continue to confirm your appointment\./);
 });
 
 test("footer has current product copy without placeholder links", async () => {
