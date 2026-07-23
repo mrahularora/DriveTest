@@ -1,56 +1,62 @@
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    window.addEventListener("DOMContentLoaded", () => {
-      let scrollPos = 0;
-      const mainNav = document.getElementById("mainNav");
-      const headerHeight = mainNav.clientHeight;
-      window.addEventListener("scroll", function () {
-        const currentTop = document.body.getBoundingClientRect().top * -1;
-        if (currentTop < scrollPos) {
-          // Scrolling Up
-          if (currentTop > 0 && mainNav.classList.contains("is-fixed")) {
-            mainNav.classList.add("is-visible");
-          } else {
-            mainNav.classList.remove("is-visible", "is-fixed");
-          }
+    let scrollPos = 0;
+    const mainNav = document.getElementById("mainNav");
+    const navToggle = mainNav.querySelector(".navbar-toggler");
+    const navMenu = document.getElementById("navbarResponsive");
+    const headerHeight = mainNav.clientHeight;
+
+    navToggle.addEventListener("click", function () {
+      const expanded = navToggle.getAttribute("aria-expanded") === "true";
+      navToggle.setAttribute("aria-expanded", String(!expanded));
+      navMenu.classList.toggle("show", !expanded);
+    });
+
+    window.addEventListener("scroll", function () {
+      const currentTop = document.body.getBoundingClientRect().top * -1;
+      if (currentTop < scrollPos) {
+        // Scrolling Up
+        if (currentTop > 0 && mainNav.classList.contains("is-fixed")) {
+          mainNav.classList.add("is-visible");
         } else {
-          // Scrolling Down
-          mainNav.classList.remove("is-visible");
-          if (
-            currentTop > headerHeight &&
-            !mainNav.classList.contains("is-fixed")
-          ) {
-            mainNav.classList.add("is-fixed");
+          mainNav.classList.remove("is-visible", "is-fixed");
+        }
+      } else {
+        // Scrolling Down
+        mainNav.classList.remove("is-visible");
+        if (
+          currentTop > headerHeight &&
+          !mainNav.classList.contains("is-fixed")
+        ) {
+          mainNav.classList.add("is-fixed");
+        }
+      }
+      scrollPos = currentTop;
+    });
+
+    const userInfo = document.getElementById("user-info");
+    const editButton = document.getElementById("edit-button");
+    const editForm = document.getElementById("edit-form");
+
+    if (editButton) {
+      editButton.addEventListener("click", () => {
+        if (userInfo && editForm) {
+          if (userInfo.style.display === "none") {
+            // Switch to view mode
+            userInfo.style.display = "block";
+            editForm.style.display = "none";
+            editButton.innerText = "Edit";
+          } else {
+            // Switch to edit mode
+            userInfo.style.display = "none";
+            editForm.style.display = "block";
+            editButton.innerText = "Cancel Edit";
           }
         }
-        scrollPos = currentTop;
       });
-
-      const userInfo = document.getElementById("user-info");
-      const editButton = document.getElementById("edit-button");
-      const editForm = document.getElementById("edit-form");
-
-      if (editButton) {
-        editButton.addEventListener("click", () => {
-          if (userInfo && editForm) {
-            if (userInfo.style.display === "none") {
-              // Switch to view mode
-              userInfo.style.display = "block";
-              editForm.style.display = "none";
-              editButton.innerText = "Edit";
-            } else {
-              // Switch to edit mode
-              userInfo.style.display = "none";
-              editForm.style.display = "block";
-              editButton.innerText = "Cancel Edit";
-            }
-          }
-        });
-      }
-    });
+    }
   });
 </script>
 

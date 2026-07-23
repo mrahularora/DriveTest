@@ -2,9 +2,10 @@
 <nav class="navbar navbar-expand-lg navbar-light" id="mainNav" aria-label="Primary navigation">
   <div class="container px-4 px-lg-5">
     <a class="navbar-brand" href="/">DriveTest</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
-      aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-      Menu <i class="fas fa-bars" aria-hidden="true"></i>
+    <button class="navbar-toggler" type="button" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span>Menu</span>
+      <span class="navbar-toggler-icon" aria-hidden="true"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav ms-auto py-4 py-lg-0">
@@ -46,7 +47,7 @@
           <li class="nav-item">
             <form action="/auth/logout" method="post">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-              <button class="nav-link px-lg-3 py-3 py-lg-4 border-0 bg-transparent" type="submit">Log out</button>
+              <button class="nav-link nav-logout px-lg-3 py-3 py-lg-4" type="submit">Log out</button>
             </form>
           </li>
         <% } else { %>

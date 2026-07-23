@@ -233,7 +233,13 @@ test("navigation shows role links and marks the current page", async () => {
   assert.match(guest, /aria-current="page">Log in<\/a>/);
   assert.match(driver, /action="\/auth\/logout" method="post"/);
   assert.match(driver, /name="_csrf" value="test-token"/);
+  assert.match(driver, /class="nav-link nav-logout/);
+  assert.match(guest, /class="navbar-toggler"[^>]+aria-expanded="false"/);
   assert.doesNotMatch(guest, /action="\/auth\/logout"/);
+
+  const scripts = await ejs.renderFile(path.join(__dirname, "..", "views", "layouts", "scripts.ejs"));
+  assert.match(scripts, /navMenu\.classList\.toggle\("show", !expanded\)/);
+  assert.doesNotMatch(scripts, /bootstrap\.bundle/);
 });
 
 test("footer has current product copy without placeholder links", async () => {
