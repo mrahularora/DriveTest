@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const path = require("node:path");
 const ejs = require("ejs");
 const getDriverJourney = require("../utils/driverJourney");
+const appointmentSlots = require("../utils/appointmentSlots");
 const navbar = path.join(__dirname, "..", "views", "layouts", "navbar.ejs");
 const footer = path.join(__dirname, "..", "views", "layouts", "footer.ejs");
 const adminView = path.join(__dirname, "..", "views", "adminDriverView.ejs");
@@ -35,7 +36,7 @@ const cases = {
     success: "",
     journey: getDriverJourney({ ...user, qualified: "G2" }, "G"),
   },
-  "appointment.ejs": { error: "", message: "" },
+  "appointment.ejs": { error: "", message: "", slots: appointmentSlots },
   "examiner.ejs": { appointments: [], error: "", message: "", filters: { testType: "all", status: "pending" } },
   "adminDriverView.ejs": { appointments: [], error: "", message: "" },
   "viewUserAppointment.ejs": { driverDetails: user, error: "" },
@@ -151,6 +152,25 @@ test("staff appointment tables are searchable, sortable, and responsive", async 
     assert.match(html, /aria-sort="none"/);
     assert.match(html, /new Intl\.Collator/);
   }
+});
+
+test("admin availability groups shared slots with clear states", async () => {
+  const html = await ejs.renderFile(path.join(__dirname, "..", "views", "appointment.ejs"), {
+    loggedIn: true,
+    userType: "admin",
+    currentPath: "/appointment",
+    csrfToken: "test-token",
+    error: "",
+    message: "",
+    slots: appointmentSlots,
+  });
+  assert.equal((html.match(/class="btn-check appointment-slot"/g) || []).length, appointmentSlots.length);
+  assert.match(html, /<legend class="h5">Morning<\/legend>/);
+  assert.match(html, /<legend class="h5">Afternoon<\/legend>/);
+  assert.match(html, /Already offered/);
+  assert.match(html, /Add selected slots/);
+  const form = html.match(/<form action="\/admin\/appointments\/"[\s\S]*?<\/form>/)[0];
+  assert.doesNotMatch(form, /form-check-inline/);
 });
 
 test("all application views render", async () => {

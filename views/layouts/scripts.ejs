@@ -131,42 +131,48 @@
   document.addEventListener("DOMContentLoaded", function () {
     const appointmentDate = document.getElementById("appointmentDate");
     if (!appointmentDate) return;
+    const slots = [...document.querySelectorAll(".appointment-slot")];
+    const submitButton = document.getElementById("submitButton");
+    const status = document.getElementById("slotManagementStatus");
     appointmentDate.valueAsDate = new Date();
     appointmentDate.min = appointmentDate.value;
 
+    function updateSubmitButton() {
+      submitButton.disabled = !slots.some((slot) => slot.checked && !slot.disabled);
+    }
+
     async function updateTimeSlotAvailability() {
+      slots.forEach((slot) => {
+        slot.checked = false;
+        slot.disabled = true;
+      });
+      updateSubmitButton();
+      status.textContent = "Loading slot availability...";
+
       try {
-        document.querySelectorAll(".form-check-input").forEach((checkbox) => {
-          checkbox.disabled = false;
+        const response = await fetch(`/checkAppointment/${appointmentDate.value}`);
+        if (!response.ok && response.status !== 404) throw new Error("Unable to load slots");
+        const existing = response.ok ? (await response.json()).time || [] : [];
+
+        slots.forEach((slot) => {
+          const alreadyOffered = existing.includes(slot.value);
+          const label = document.querySelector(`label[for="${slot.id}"]`);
+          slot.disabled = alreadyOffered;
+          label.classList.toggle("btn-outline-primary", !alreadyOffered);
+          label.classList.toggle("btn-outline-secondary", alreadyOffered);
+          label.querySelector(".slot-state").textContent = alreadyOffered ? "Already offered" : "Available to add";
         });
-
-        const selectedDate = document.getElementById("appointmentDate").value;
-        const response = await fetch(`checkAppointment/${selectedDate}`);
-
-        if (response.ok) {
-          const existingAppointments = await response.json();
-          const times = existingAppointments.time;
-
-          if (times) {
-            times.forEach((appointment) => {
-              const time = appointment;
-              const checkbox = document.getElementById(time);
-
-              if (checkbox) {
-                checkbox.disabled = true;
-              }
-            });
-          }
-        } else {
-          console.error(`Error fetching appointments: ${response.statusText}`);
-        }
+        status.textContent = existing.length
+          ? `${existing.length} slot${existing.length === 1 ? " is" : "s are"} already offered. Select any new times to add.`
+          : "No slots are offered yet. Select one or more times to add.";
       } catch (error) {
-        console.error("Fetch error:", error);
+        status.textContent = "Unable to load availability. Choose the date again to retry.";
       }
     }
 
     updateTimeSlotAvailability();
     appointmentDate.addEventListener("change", updateTimeSlotAvailability);
+    slots.forEach((slot) => slot.addEventListener("change", updateSubmitButton));
   });
 </script>
 <script>
