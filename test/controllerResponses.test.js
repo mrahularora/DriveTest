@@ -8,6 +8,7 @@ const checkTimeSlot = require("../controllers/checkTimeSlot");
 const modifyDetail = require("../controllers/modifyDetail");
 const examineAppointment = require("../controllers/examinUserAppointment");
 const examinerQueue = require("../controllers/examinerController");
+const home = require("../controllers/home");
 const createAccount = require("../controllers/createNewAccount");
 const auth = require("../middleware/authMiddleware");
 const express = require("express");
@@ -317,6 +318,43 @@ test("examiner queue defaults to pending appointments", async () => {
   } finally {
     BookedTimeSlot.find = originals.bookingFind;
     UserAccount.find = originals.userFind;
+  }
+});
+
+test("staff dashboard totals combine availability and results", async () => {
+  const originals = {
+    appointmentAggregate: Appointment.aggregate,
+    bookingCount: BookedTimeSlot.countDocuments,
+    userAggregate: UserAccount.aggregate,
+  };
+  Appointment.aggregate = async () => [{ total: 10 }];
+  BookedTimeSlot.countDocuments = async () => 3;
+  UserAccount.aggregate = async () => [
+    { _id: "Passed", total: 4 },
+    { _id: "Failed", total: 1 },
+  ];
+
+  try {
+    const staff = response();
+    await home({ session: { userType: "admin" } }, staff, assert.fail);
+    assert.deepEqual(staff.locals.totals, {
+      available: 7,
+      booked: 3,
+      completed: 5,
+      passed: 4,
+      failed: 1,
+    });
+
+    Appointment.aggregate = assert.fail;
+    BookedTimeSlot.countDocuments = assert.fail;
+    UserAccount.aggregate = assert.fail;
+    const guest = response();
+    await home({ session: {} }, guest, assert.fail);
+    assert.equal(guest.locals.totals, null);
+  } finally {
+    Appointment.aggregate = originals.appointmentAggregate;
+    BookedTimeSlot.countDocuments = originals.bookingCount;
+    UserAccount.aggregate = originals.userAggregate;
   }
 });
 

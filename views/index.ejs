@@ -35,6 +35,27 @@
     </header>
 
     <main>
+      <% if (totals && (userType === 'admin' || userType === 'examiner')) { %>
+        <section class="home-section" aria-labelledby="dashboard-totals-heading">
+          <div class="container px-4 px-lg-5">
+            <div class="home-section-heading">
+              <span class="home-kicker">Live operations</span>
+              <h2 id="dashboard-totals-heading">Appointment overview</h2>
+            </div>
+            <div class="row row-cols-2 row-cols-lg-5 g-3 text-center">
+              <% [
+                ["Available", totals.available],
+                ["Booked", totals.booked],
+                ["Completed", totals.completed],
+                ["Passed", totals.passed],
+                ["Failed", totals.failed],
+              ].forEach(function(metric) { %>
+                <div class="col"><article class="portal-card h-100"><strong class="display-6 d-block"><%= metric[1] %></strong><span><%= metric[0] %></span></article></div>
+              <% }); %>
+            </div>
+          </div>
+        </section>
+      <% } %>
       <section class="home-section" aria-labelledby="portal-heading">
         <div class="container px-4 px-lg-5">
           <div class="home-section-heading">

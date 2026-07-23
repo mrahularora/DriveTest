@@ -26,7 +26,7 @@ const user = {
 };
 
 const cases = {
-  "index.ejs": {},
+  "index.ejs": { totals: null },
   "login.ejs": { error: "", success: "" },
   "register.ejs": { error: "" },
   "g2test.ejs": { user, error: "", success: "", journey: getDriverJourney(user, "G2") },
@@ -171,6 +171,20 @@ test("admin availability groups shared slots with clear states", async () => {
   assert.match(html, /Add selected slots/);
   const form = html.match(/<form action="\/admin\/appointments\/"[\s\S]*?<\/form>/)[0];
   assert.doesNotMatch(form, /form-check-inline/);
+});
+
+test("staff dashboard shows operational totals", async () => {
+  const html = await ejs.renderFile(path.join(__dirname, "..", "views", "index.ejs"), {
+    loggedIn: true,
+    userType: "admin",
+    currentPath: "/",
+    csrfToken: "test-token",
+    totals: { available: 7, booked: 3, completed: 5, passed: 4, failed: 1 },
+  });
+  assert.match(html, /Appointment overview/);
+  for (const label of ["Available", "Booked", "Completed", "Passed", "Failed"]) {
+    assert.match(html, new RegExp(`<span>${label}</span>`));
+  }
 });
 
 test("all application views render", async () => {
