@@ -252,6 +252,8 @@ test("forms use alerts and driver results use status badges", async () => {
     csrfToken: "test-token",
   });
   assert.match(login, /class="alert alert-danger"/);
+  assert.match(login, /class="form-actions"/);
+  assert.doesNotMatch(login, /class="c-account"/);
 
   const admin = await ejs.renderFile(adminView, {
     loggedIn: true,
@@ -279,4 +281,5 @@ test("public signup does not expose staff roles", async () => {
   });
   assert.doesNotMatch(html, /name="userType"/);
   assert.match(html, /New accounts are created for drivers\./);
+  assert.match(html, /class="form-actions"/);
 });

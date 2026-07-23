@@ -13,8 +13,10 @@
         <div class="form-floating"><input class="form-control" id="recoveryCode" name="recoveryCode" autocomplete="off" required /><label for="recoveryCode">Recovery code</label></div>
         <div class="form-floating"><input class="form-control" id="recoveryPassword" name="newPassword" type="password" minlength="8" autocomplete="new-password" required /><label for="recoveryPassword">New password</label></div>
         <div class="form-floating"><input class="form-control" id="recoveryConfirmPassword" name="confirmPassword" type="password" minlength="8" autocomplete="new-password" required /><label for="recoveryConfirmPassword">Confirm new password</label></div>
-        <button class="btn btn-primary mt-3" type="submit">Reset password</button>
-        <a class="btn btn-link mt-3" href="/login">Back to login</a>
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">Reset password</button>
+          <a href="/login">Back to login</a>
+        </div>
       </form>
     </div></div></div>
   </main>
