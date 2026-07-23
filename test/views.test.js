@@ -104,6 +104,43 @@ test("pending appointments offer reschedule and cancellation controls", async ()
   assert.match(html, /Cancel appointment/);
 });
 
+test("G appointments use the shared booking and management layout", async () => {
+  const pendingUser = {
+    ...user,
+    qualified: "G2",
+    testType: "G",
+    appointmentDate: "2999-01-01",
+    appointmentTime: "09:00",
+  };
+  const pending = await ejs.renderFile(path.join(__dirname, "..", "views", "gtest.ejs"), {
+    loggedIn: true,
+    userType: "driver",
+    currentPath: "/g",
+    csrfToken: "test-token",
+    user: pendingUser,
+    error: "",
+    success: "",
+    journey: getDriverJourney(pendingUser, "G"),
+  });
+  assert.match(pending, /id="g-booking-heading">G appointment/);
+  assert.match(pending, /name="action" value="reschedule"/);
+  assert.match(pending, /name="action" value="cancel"/);
+
+  const bookableUser = { ...user, qualified: "G2", status: "Failed" };
+  const bookable = await ejs.renderFile(path.join(__dirname, "..", "views", "gtest.ejs"), {
+    loggedIn: true,
+    userType: "driver",
+    currentPath: "/g",
+    csrfToken: "test-token",
+    user: bookableUser,
+    error: "",
+    success: "",
+    journey: getDriverJourney(bookableUser, "G"),
+  });
+  assert.match(bookable, /name="Gdate"/);
+  assert.match(bookable, /Book G test/);
+});
+
 test("drivers see completed appointments and results", async () => {
   const completedUser = {
     ...user,
