@@ -19,41 +19,58 @@
                 <div class="alert alert-success" role="status"><%= success %></div>
               <% } %>
 
-              <div id="user-info" class="mb-5">
-                <h2 class="h4">Driver information</h2>
-                <p class="mb-1"><strong>Name:</strong> <%= user.firstName %> <%= user.lastName %></p>
-                <p class="mb-1"><strong>Age:</strong> <%= user.age %></p>
-                <p><strong>Licence number:</strong> <%= user.licenceNo %></p>
+              <div id="user-info" class="row g-4 mb-5">
+                <section class="col-md-6" aria-labelledby="driver-details-heading">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h2 class="h4" id="driver-details-heading">Personal and licence details</h2>
+                      <dl class="row g-3 mb-0">
+                        <div class="col-12"><dt class="small text-muted">Full name</dt><dd class="mb-0"><%= user.firstName %> <%= user.lastName %></dd></div>
+                        <div class="col-sm-6"><dt class="small text-muted">Age</dt><dd class="mb-0"><%= user.age %></dd></div>
+                        <div class="col-sm-6"><dt class="small text-muted">Licence number</dt><dd class="mb-0"><%= user.licenceNo %></dd></div>
+                      </dl>
+                    </div>
+                  </div>
+                </section>
 
-                <h2 class="h4 mt-4">Vehicle details</h2>
-                <p class="mb-1"><strong>Make and model:</strong> <%= user.carDetails.make %> <%= user.carDetails.model %></p>
-                <p><strong>Year and plate:</strong> <%= user.carDetails.year %> · <%= user.carDetails.plateNo %></p>
+                <section class="col-md-6" aria-labelledby="g-vehicle-details-heading">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h2 class="h4" id="g-vehicle-details-heading">Vehicle details</h2>
+                      <dl class="row g-3">
+                        <div class="col-12"><dt class="small text-muted">Make and model</dt><dd class="mb-0"><%= user.carDetails.make %> <%= user.carDetails.model %></dd></div>
+                        <div class="col-sm-6"><dt class="small text-muted">Year</dt><dd class="mb-0"><%= user.carDetails.year %></dd></div>
+                        <div class="col-sm-6"><dt class="small text-muted">Plate number</dt><dd class="mb-0"><%= user.carDetails.plateNo %></dd></div>
+                      </dl>
 
-                <details>
-                  <summary class="btn btn-outline-primary">Update vehicle details</summary>
-                  <form action="/edit" method="POST" class="mt-3">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                    <input type="hidden" name="action" value="car" />
-                    <div class="form-floating">
-                      <input class="form-control" id="carMake" name="make" value="<%- user.carDetails.make %>" required />
-                      <label for="carMake">Make</label>
+                      <details>
+                        <summary class="btn btn-outline-primary">Update vehicle details</summary>
+                        <form action="/edit" method="POST" class="mt-3">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                          <input type="hidden" name="action" value="car" />
+                          <div class="form-floating">
+                            <input class="form-control" id="carMake" name="make" value="<%- user.carDetails.make %>" required />
+                            <label for="carMake">Make</label>
+                          </div>
+                          <div class="form-floating">
+                            <input class="form-control" id="carModel" name="model" value="<%- user.carDetails.model %>" required />
+                            <label for="carModel">Model</label>
+                          </div>
+                          <div class="form-floating">
+                            <input class="form-control" id="carYear" name="year" type="number" min="1900"
+                              value="<%- user.carDetails.year %>" required />
+                            <label for="carYear">Year</label>
+                          </div>
+                          <div class="form-floating">
+                            <input class="form-control" id="carPlate" name="plateNo" value="<%- user.carDetails.plateNo %>" required />
+                            <label for="carPlate">Plate number</label>
+                          </div>
+                          <button class="btn btn-primary mt-3" type="submit">Save vehicle details</button>
+                        </form>
+                      </details>
                     </div>
-                    <div class="form-floating">
-                      <input class="form-control" id="carModel" name="model" value="<%- user.carDetails.model %>" required />
-                      <label for="carModel">Model</label>
-                    </div>
-                    <div class="form-floating">
-                      <input class="form-control" id="carYear" name="year" type="number" min="1900"
-                        value="<%- user.carDetails.year %>" required />
-                      <label for="carYear">Year</label>
-                    </div>
-                    <div class="form-floating">
-                      <input class="form-control" id="carPlate" name="plateNo" value="<%- user.carDetails.plateNo %>" required />
-                      <label for="carPlate">Plate number</label>
-                    </div>
-                    <button class="btn btn-primary mt-3" type="submit">Save vehicle details</button>
-                  </form>
-                </details>
+                  </div>
+                </section>
               </div>
 
               <%- include('layouts/appointmentPanel', { testType: 'G' }) -%>

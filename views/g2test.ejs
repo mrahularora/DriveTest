@@ -23,19 +23,31 @@
                 <form action="/edit" method="POST" class="mb-5">
                   <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                   <input type="hidden" name="action" value="profile" />
-                  <h2 class="h4">Personal details</h2>
-                  <div class="form-floating"><input class="form-control" id="firstname" name="firstName" value="<%- user.firstName === 'default' ? '' : user.firstName %>" required /><label for="firstname">First name</label></div>
-                  <div class="form-floating"><input class="form-control" id="lastname" name="lastName" value="<%- user.lastName === 'default' ? '' : user.lastName %>" required /><label for="lastname">Last name</label></div>
-                  <div class="form-floating"><input class="form-control" id="LicenseNo" name="licenceNo" value="<%- user.licenceNo === 'default' ? '' : user.licenceNo %>" minlength="8" maxlength="8" pattern="[A-Za-z0-9]{8}" required /><label for="LicenseNo">Licence number</label></div>
-                  <div class="form-floating"><input class="form-control" id="Age" name="age" type="number" min="16" max="100" value="<%- user.age || '' %>" required /><label for="Age">Age</label></div>
-                  <div class="form-floating"><input class="form-control" id="dob" name="dob" type="date" value="<%- user.dob ? user.dob.toISOString().slice(0, 10) : '' %>" required /><label for="dob">Date of birth</label></div>
+                  <section class="card mb-4" aria-labelledby="personal-details-heading">
+                    <div class="card-body">
+                      <h2 class="h4" id="personal-details-heading">Personal and licence details</h2>
+                      <div class="row g-3">
+                        <div class="col-md-6"><div class="form-floating"><input class="form-control" id="firstname" name="firstName" value="<%- user.firstName === 'default' ? '' : user.firstName %>" required /><label for="firstname">First name</label></div></div>
+                        <div class="col-md-6"><div class="form-floating"><input class="form-control" id="lastname" name="lastName" value="<%- user.lastName === 'default' ? '' : user.lastName %>" required /><label for="lastname">Last name</label></div></div>
+                        <div class="col-md-6"><div class="form-floating"><input class="form-control" id="LicenseNo" name="licenceNo" value="<%- user.licenceNo === 'default' ? '' : user.licenceNo %>" minlength="8" maxlength="8" pattern="[A-Za-z0-9]{8}" required /><label for="LicenseNo">Licence number</label></div></div>
+                        <div class="col-md-6"><div class="form-floating"><input class="form-control" id="Age" name="age" type="number" min="16" max="100" value="<%- user.age || '' %>" required /><label for="Age">Age</label></div></div>
+                        <div class="col-12"><div class="form-floating"><input class="form-control" id="dob" name="dob" type="date" value="<%- user.dob ? user.dob.toISOString().slice(0, 10) : '' %>" required /><label for="dob">Date of birth</label></div></div>
+                      </div>
+                    </div>
+                  </section>
 
-                  <h2 class="h4 mt-4">Vehicle details</h2>
-                  <div class="form-floating"><input class="form-control" id="make" name="make" value="<%- user.carDetails.make === 'default' ? '' : user.carDetails.make %>" required /><label for="make">Make</label></div>
-                  <div class="form-floating"><input class="form-control" id="model" name="model" value="<%- user.carDetails.model === 'default' ? '' : user.carDetails.model %>" required /><label for="model">Model</label></div>
-                  <div class="form-floating"><input class="form-control" id="year" name="year" type="number" min="1900" value="<%- user.carDetails.year || '' %>" required /><label for="year">Year</label></div>
-                  <div class="form-floating"><input class="form-control" id="plateno" name="plateNo" value="<%- user.carDetails.plateNo === 'default' ? '' : user.carDetails.plateNo %>" required /><label for="plateno">Plate number</label></div>
-                  <button class="btn btn-primary mt-3" type="submit">Save profile</button>
+                  <section class="card" aria-labelledby="vehicle-details-heading">
+                    <div class="card-body">
+                      <h2 class="h4" id="vehicle-details-heading">Vehicle details</h2>
+                      <div class="row g-3">
+                        <div class="col-md-6"><div class="form-floating"><input class="form-control" id="make" name="make" value="<%- user.carDetails.make === 'default' ? '' : user.carDetails.make %>" required /><label for="make">Make</label></div></div>
+                        <div class="col-md-6"><div class="form-floating"><input class="form-control" id="model" name="model" value="<%- user.carDetails.model === 'default' ? '' : user.carDetails.model %>" required /><label for="model">Model</label></div></div>
+                        <div class="col-md-6"><div class="form-floating"><input class="form-control" id="year" name="year" type="number" min="1900" value="<%- user.carDetails.year || '' %>" required /><label for="year">Year</label></div></div>
+                        <div class="col-md-6"><div class="form-floating"><input class="form-control" id="plateno" name="plateNo" value="<%- user.carDetails.plateNo === 'default' ? '' : user.carDetails.plateNo %>" required /><label for="plateno">Plate number</label></div></div>
+                      </div>
+                      <button class="btn btn-primary mt-3" type="submit">Save profile</button>
+                    </div>
+                  </section>
                 </form>
 
                 <%- include('layouts/appointmentPanel', { testType: 'G2' }) -%>

@@ -83,6 +83,9 @@ test("G2 profile and booking fields use separate forms", async () => {
   assert.ok(bookingForm);
   assert.doesNotMatch(profileForm, /name="G2date"/);
   assert.doesNotMatch(bookingForm, /name="firstName"/);
+  assert.match(profileForm, /id="personal-details-heading">Personal and licence details/);
+  assert.match(profileForm, /id="vehicle-details-heading">Vehicle details/);
+  assert.match(profileForm, /class="row g-3"/);
   assert.match(bookingForm, /Choose a date to load available times\./);
   assert.match(bookingForm, /type="submit" disabled/);
 });
@@ -123,6 +126,8 @@ test("G appointments use the shared booking and management layout", async () => 
     journey: getDriverJourney(pendingUser, "G"),
   });
   assert.match(pending, /id="g-booking-heading">G appointment/);
+  assert.match(pending, /id="driver-details-heading">Personal and licence details/);
+  assert.match(pending, /id="g-vehicle-details-heading">Vehicle details/);
   assert.match(pending, /name="action" value="reschedule"/);
   assert.match(pending, /name="action" value="cancel"/);
 
