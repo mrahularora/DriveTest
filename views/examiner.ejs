@@ -5,7 +5,15 @@
   <body>
     <!-- Navigation-->
     <%- include('layouts/navbar'); -%>
-      <%- include('layouts/pageHeader', { heading: 'Examiner queue', description: 'Review upcoming tests and record assessment results.' }); -%>
+      <%- include('layouts/pageHeader', { heading: 'Examiner workspace', description: 'Assessment and results.' }); -%>
+      <%- include('layouts/workspaceIntro', {
+        id: 'examiner-intro',
+        eyebrow: 'Assessment queue',
+        heading: 'Review upcoming road tests',
+        description: 'Filter the queue, open a pending appointment, and record the result after the test.',
+        primaryHref: '#examinerAppointments',
+        primaryLabel: 'Review appointment queue'
+      }); -%>
       <!-- Filter Form -->
       <div class="container mt-3">
         <% if (error) { %><div class="alert alert-danger" role="alert"><%= error %></div><% } %>

@@ -6,7 +6,17 @@
 <body>
     <!-- Navigation-->
     <%- include('layouts/navbar'); -%>
-        <%- include('layouts/pageHeader', { heading: 'Driver status', description: 'Review completed assessments and licensing decisions.' }); -%>
+        <%- include('layouts/pageHeader', { heading: 'Administrator workspace', description: 'Driver results and licensing.' }); -%>
+        <%- include('layouts/workspaceIntro', {
+            id: 'licensing-intro',
+            eyebrow: 'Licensing',
+            heading: 'Issue licences from completed results',
+            description: 'Review passed and failed road tests, then open eligible records to issue a licence.',
+            primaryHref: '#adminAppointments',
+            primaryLabel: 'Review driver results',
+            secondaryHref: '/appointment',
+            secondaryLabel: 'Manage availability'
+        }); -%>
 
         <div class="container mt-5">
             <h2>Completed assessments</h2>

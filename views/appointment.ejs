@@ -6,7 +6,17 @@
     <!-- Navigation-->
     <%- include('layouts/navbar'); -%>
 
-    <%- include('layouts/pageHeader', { heading: 'Appointment availability', description: 'Create and review road-test time slots.' }); -%>
+    <%- include('layouts/pageHeader', { heading: 'Administrator workspace', description: 'Appointment availability.' }); -%>
+    <%- include('layouts/workspaceIntro', {
+      id: 'availability-intro',
+      eyebrow: 'Scheduling',
+      heading: 'Publish appointment availability',
+      description: 'Choose a date, review the existing schedule, and add the road-test times drivers can book.',
+      primaryHref: '#slotManagementForm',
+      primaryLabel: 'Add time slots',
+      secondaryHref: '/checkDriverStatus',
+      secondaryLabel: 'Review driver results'
+    }); -%>
     <div class="container mt-5">
       <h2>Add time slots</h2>
       <% if (typeof error !== 'undefined' && error.length > 1){ %>

@@ -220,6 +220,15 @@ test("staff appointment tables are searchable, sortable, and responsive", async 
     assert.match(html, /data-sort-column="0"/);
     assert.match(html, /aria-sort="none"/);
     assert.match(html, /new Intl\.Collator/);
+    assert.match(html, /flex-column flex-lg-row/);
+    if (file === "examiner.ejs") {
+      assert.match(html, /Review upcoming road tests/);
+      assert.match(html, /href="#examinerAppointments">Review appointment queue/);
+    } else {
+      assert.match(html, /Issue licences from completed results/);
+      assert.match(html, /href="#adminAppointments">Review driver results/);
+      assert.match(html, /href="\/appointment">Manage availability/);
+    }
   }
 });
 
@@ -238,6 +247,9 @@ test("admin availability groups shared slots with clear states", async () => {
   assert.match(html, /<legend class="h5">Afternoon<\/legend>/);
   assert.match(html, /Already offered/);
   assert.match(html, /Add selected slots/);
+  assert.match(html, /Publish appointment availability/);
+  assert.match(html, /href="#slotManagementForm">Add time slots/);
+  assert.match(html, /href="\/checkDriverStatus">Review driver results/);
   const form = html.match(/<form action="\/admin\/appointments\/"[\s\S]*?<\/form>/)[0];
   assert.doesNotMatch(form, /form-check-inline/);
 });
